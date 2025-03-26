@@ -9,7 +9,6 @@ function Login() {
 
   const demoCredentials = {
     cashier: { username: "cashier", password: "cashier123" },
-    customer: { username: "customer", password: "customer123" },
     manager: { username: "manager", password: "manager123" },
   };
 
@@ -22,11 +21,6 @@ function Login() {
     ) {
       navigate("/cashier");
     } else if (
-      username === demoCredentials.customer.username &&
-      password === demoCredentials.customer.password
-    ) {
-      navigate("/customer");
-    } else if (
       username === demoCredentials.manager.username &&
       password === demoCredentials.manager.password
     ) {
@@ -35,6 +29,10 @@ function Login() {
       alert("Invalid credentials. Please try again.");
     }
   };
+
+  const handleCustomer = () => {
+    navigate("/customer");
+  }
 
   return (
     <div className="container">
@@ -64,6 +62,9 @@ function Login() {
           </div>
           <button type="submit" className="login-button">
             LOGIN
+          </button>
+          <button onClick={handleCustomer} className="customer-button">
+            Continue as Customer
           </button>
         </form>
         <p className="forgot-password">Forgot password?</p>
