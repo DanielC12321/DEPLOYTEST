@@ -1,6 +1,6 @@
 import React from 'react';
 
-function Cashier() {
+function Customer() {
   return (
     <div>
       <h1>Cashier</h1>
@@ -8,4 +8,4 @@ function Cashier() {
   );
 }
 
-export default Cashier;
+export default Customer;

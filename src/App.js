@@ -1,31 +1,22 @@
+// App.js
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
 import Cashier from './pages/cashier';
 import Customer from './pages/customer';
-import Manager from './pages/manager';
+import Login from './pages/login';
+import ManagerInterface from './pages/ManagerInterface.tsx';
 
 function App() {
   return (
     <Router>
       <div className="App">
-        <nav>
-          <ul>
-            <li>
-              <Link to="/cashier">Cashier</Link>
-            </li>
-            <li>
-              <Link to="/customer">Customer</Link>
-            </li>
-            <li>
-              <Link to="/manager">Manager</Link>
-            </li>
-          </ul>
-        </nav>
         <Routes>
+          <Route path="/" element={<Navigate to="/login" />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/cashier" element={<Cashier />} />
           <Route path="/customer" element={<Customer />} />
-          <Route path="/manager" element={<Manager />} />
+          <Route path="/manager" element={<ManagerInterface />} />
         </Routes>
       </div>
     </Router>
