@@ -3,7 +3,7 @@ var router = express.Router();
 const Database = require('./Database');
 /* GET users listing. */
 
-//Product Table
+//Product Table http://localhost:8001/users/product_table
 router.get('/product_table', async (req, res) => {
     try {
       const result = await Database.executeQuery('product-table');
@@ -16,7 +16,7 @@ router.get('/product_table', async (req, res) => {
   
 );
 
-//Product Table
+//Product Table http://localhost:8001/users/ingredient_table
 router.get('/ingredient_table', async (req, res) => {
   try {
     const result = await Database.executeQuery('ingredient-table');
