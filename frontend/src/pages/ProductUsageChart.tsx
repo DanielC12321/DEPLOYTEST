@@ -1,4 +1,3 @@
-// ProductUsageChart.tsx
 import React, { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -41,10 +40,7 @@ const ProductUsageChart: React.FC = () => {
         const end_date = formatDate(endDate);
 
         try {
-            const response = await fetch(`/product-usage-chart?start_date=${start_date}&end_date=${end_date}`);
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
+            const response = await fetch(`http://localhost:8001/product-usage-chart?start_date=${start_date}&end_date=${end_date}`);
             const jsonData: UsageData[] = await response.json();
 
             // Optionally sort data based on current sortOrder
@@ -56,6 +52,7 @@ const ProductUsageChart: React.FC = () => {
             alert('Error loading data');
         }
     };
+
 
     // Update chart dataset based on new data
     const updateChart = (usageData: UsageData[]) => {
@@ -103,16 +100,18 @@ const ProductUsageChart: React.FC = () => {
                         <label>Start Date: </label>
                         <DatePicker
                             selected={startDate}
-                            onChange={(date: Date) => setStartDate(date)}
+                            onChange={(date: Date) => setStartDate(date!)}  // Ensuring a non-null value
                             dateFormat="yyyy-MM-dd"
+                            maxDate={endDate}  // Optional: ensures start date is not after end date
                         />
                     </div>
                     <div>
                         <label>End Date: </label>
                         <DatePicker
                             selected={endDate}
-                            onChange={(date: Date) => setEndDate(date)}
+                            onChange={(date: Date) => setEndDate(date!)}  // Ensuring a non-null value
                             dateFormat="yyyy-MM-dd"
+                            minDate={startDate}  // Optional: ensures end date is not before start date
                         />
                     </div>
                     <button onClick={loadData}>Load Data</button>

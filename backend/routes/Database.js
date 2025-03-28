@@ -1,4 +1,5 @@
 const { Pool } = require('pg');
+const {queries} = require("./QueryManager");
 require('dotenv').config();
 
 class Database {
@@ -29,7 +30,7 @@ class Database {
     }
 
     async executeQuery(queryName, params = []) {
-        const query = QueryManager.getQuery(queryName);
+        const query = queries[queryName];
         if (!query) {
             console.log(`Query not found: ${queryName}`);
             throw new Error(`Query "${queryName}" not found.`);

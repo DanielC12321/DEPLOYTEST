@@ -33,10 +33,6 @@ class QueryManager {
         "debug-connection": "SELECT 1;",
         // Add more queries here
     };
-
-    static getQuery(name) {
-        return this.queries[name] || null;
-    }
 }
 
 module.exports = QueryManager;
