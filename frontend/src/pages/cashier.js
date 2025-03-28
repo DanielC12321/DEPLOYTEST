@@ -4,22 +4,42 @@ import "./cashier.css";
 
 
 function Cashier() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [Open, setOpen] = useState(false);
   const [productNum, setproductNum] = useState(null);
+  const [sugar, setSugar] = useState('standard');
+  const [size, setSize] = useState('medium');
+  const [pearls, setPearls] = useState('standard');
+  const [custom, setCustom] = useState('standard');
+
+  const Customize = (ingredient, amount) => {
+    if (ingredient === 'sugar') setSugar(amount);
+    if (ingredient === 'size') setSize(amount);
+    if (ingredient === 'pearls') setPearls(amount);
+    if (ingredient === 'custom') setCustom(amount);
+  };
+
+  const ConfirmCustom = () => {
+    setOpen(false);
+    //submit product to order summary
+    //have object that keep track of this and sends it to checkout
+    //use the productNum to link with products in database
+    alert(`You selected: Size: ${size}, Sugar: ${sugar}, and Pearls: ${pearls}`);
+  };
+
   const navigate = useNavigate();
 
   const pickProduct = (num) => {
     setproductNum(num);
-    setIsOpen(true);
-  }
+    setOpen(true);
+  };
 
   const logout = () => {
     navigate("/login");
-  }
+  };
 
   const checkout = () => {
     navigate("/cashierCheckout");
-  }
+  };
 
   return (
         <div id="wrapper">
@@ -29,7 +49,7 @@ function Cashier() {
         <div class="divs" id="div3"><a>Div</a></div>
         <div class="divs" id="div4"><a>Div</a></div>
         <div class="divs" id="div5">
-        {!isOpen &&
+        {!Open &&
         <div class="menutable">
         <div class="menu">
           <button onClick={() => pickProduct(0)}>Milk Tea #0</button>
@@ -61,12 +81,36 @@ function Cashier() {
         </div>
         </div>
         }
-        {isOpen && (
+        {Open && (
             <div className="cstmwindow">
               <div className="customize">
                 <h2>Customize Item</h2>
-                <p>Add More Ice.</p>
-                <button onClick={() => setIsOpen(false)} className="order">Add Order</button>
+                <h4>Size</h4>
+
+                <div class="customButtons">
+                <button class={size === 'small' ? 'selected' : ''} onClick={() => Customize('size', 'small')}>Small</button>
+                <button class={size === 'medium' ? 'selected' : ''} onClick={() => Customize('size', 'medium')}>Medium</button>
+                <button class={size === 'large' ? 'selected' : ''} onClick={() => Customize('size', 'large')}>Large</button>
+                </div>
+
+                <h4>Sugar</h4>
+
+                <div class="customButtons">
+                <button class={sugar === 'less' ? 'selected' : ''} onClick={() => Customize('sugar', 'less')}>Less</button>
+                <button class={sugar === 'standard' ? 'selected' : ''} onClick={() => Customize('sugar', 'standard')}>Standard</button>
+                <button class={sugar === 'extra' ? 'selected' : ''} onClick={() => Customize('sugar', 'extra')}>Extra</button>
+                </div>
+
+                <h4>Pearls</h4>
+
+                <div class="customButtons">
+                <button class={pearls === 'less' ? 'selected' : ''} onClick={() => Customize('pearls', 'less')}>Less</button>
+                <button class={pearls === 'standard' ? 'selected' : ''} onClick={() => Customize('pearls', 'standard')}>Standard</button>
+                <button class={pearls === 'extra' ? 'selected' : ''} onClick={() => Customize('pearls', 'extra')}>Extra</button>
+                </div>
+
+
+                <button onClick={() => ConfirmCustom()} className="order">Add Order</button>
               </div>
             </div>
           )}
