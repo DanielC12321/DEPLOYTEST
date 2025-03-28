@@ -34,13 +34,15 @@ const ProductUsageChart: React.FC = () => {
 
     // Fetch data from API and update the chart
     const loadData = async () => {
+        const apiUrl = process.env.REACT_APP_API_URL;
+
         // Format dates to yyyy-MM-dd
         const formatDate = (date: Date) => date.toISOString().split('T')[0];
         const start_date = formatDate(startDate);
         const end_date = formatDate(endDate);
 
         try {
-            const response = await fetch(`http://localhost:8001/product-usage-chart?start_date=${start_date}&end_date=${end_date}`);
+            const response = await fetch(`${apiUrl}/product-usage-chart?start_date=${start_date}&end_date=${end_date}`);
             const jsonData: UsageData[] = await response.json();
 
             // Optionally sort data based on current sortOrder
