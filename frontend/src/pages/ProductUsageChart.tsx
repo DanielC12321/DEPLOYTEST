@@ -21,40 +21,9 @@ interface UsageData {
     total_used: number;
 }
 
-/*
-  // TODO: Remove the SQL query and credentials eventually once a backend is available.
-  const DB_URL = "jdbc:postgresql://csce-315-db.engr.tamu.edu/team_40_db";
-  const DB_USER = "team_40";
-  const DB_PASSWORD = "pearlprodigy";
-
-  const sqlQuery = `
-      WITH product_usage AS (
-          SELECT
-              pi.ingredientid,
-              SUM(cp.quantity * pi.quantity_required) AS total_used
-          FROM customer_order co
-          JOIN customer_product cp ON co.order_id = cp.order_id
-          JOIN product_ingredient pi ON cp.product_id = pi.product_id
-          WHERE co.datetime BETWEEN ? AND ?
-          GROUP BY pi.ingredientid
-      )
-      SELECT
-          i.name AS ingredient_name,
-          pu.total_used
-      FROM product_usage pu
-      JOIN ingredients i ON pu.ingredientid = i.ingredientid
-      ORDER BY i.name;
-  `;
-
-  // Original API call code:
-  // const response = await fetch(`/api/productUsage?start=${start}&end=${end}`);
-  // if (!response.ok) { throw new Error('Network response was not ok'); }
-  // const jsonData: UsageData[] = await response.json();
-*/
-
 const ProductUsageChart: React.FC = () => {
     // Set initial state dates. Adjust these defaults as needed.
-    const [startDate, setStartDate] = useState<Date>(new Date('2024-01-01'));
+    const [startDate, setStartDate] = useState<Date>(new Date('2025-02-01'));
     const [endDate, setEndDate] = useState<Date>(new Date());
     const [data, setData] = useState<UsageData[]>([]);
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
@@ -64,37 +33,19 @@ const ProductUsageChart: React.FC = () => {
         datasets: [],
     });
 
-    // Simulated function to mimic a backend API call that returns hardcoded data.
-    // This data is based on the SQL query provided.
-    const simulateLoadData = (start: string, end: string): UsageData[] => {
-        // For example purposes only.
-        return [
-            { ingredient_name: 'Flour', total_used: 120 },
-            { ingredient_name: 'Sugar', total_used: 80 },
-            { ingredient_name: 'Eggs', total_used: 200 },
-            { ingredient_name: 'Butter', total_used: 50 },
-        ];
-    };
-
-    // Fetch data (simulated) and update the chart
+    // Fetch data from API and update the chart
     const loadData = async () => {
         // Format dates to yyyy-MM-dd
         const formatDate = (date: Date) => date.toISOString().split('T')[0];
-        const start = formatDate(startDate);
-        const end = formatDate(endDate);
+        const start_date = formatDate(startDate);
+        const end_date = formatDate(endDate);
 
         try {
-            // Uncomment and use the following code when backend is available.
-            /*
-            const response = await fetch(`/api/productUsage?start=${start}&end=${end}`);
+            const response = await fetch(`/product-usage-chart?start_date=${start_date}&end_date=${end_date}`);
             if (!response.ok) {
-              throw new Error('Network response was not ok');
+                throw new Error('Network response was not ok');
             }
             const jsonData: UsageData[] = await response.json();
-            */
-
-            // For now, we use simulated data:
-            const jsonData: UsageData[] = simulateLoadData(start, end);
 
             // Optionally sort data based on current sortOrder
             const sortedData = sortData(jsonData, sortOrder);

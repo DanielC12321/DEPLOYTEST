@@ -25,6 +25,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
+// Manager endpoints
+var productUsageRouter = require('./routes/managers');
+app.use('/', productUsageRouter);
+
+// Put custom endpoints here
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
