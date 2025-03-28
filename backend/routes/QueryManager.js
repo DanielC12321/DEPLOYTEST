@@ -34,6 +34,7 @@ class QueryManager {
         // Add more queries here
         "product-table": "SELECT * FROM product;",
         "ingredient-table": "SELECT * FROM ingredients;",
+        "add-product": "INSERT INTO product (name, product_cost) VALUES ($1, $2) RETURNING product_id;",
     };
 }
 
