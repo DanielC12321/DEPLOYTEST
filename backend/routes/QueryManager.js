@@ -32,6 +32,8 @@ class QueryManager {
         `,
         "debug-connection": "SELECT 1;",
         // Add more queries here
+        "product-table": "SELECT * FROM product;",
+        "ingredient-table": "SELECT * FROM ingredients;",
     };
 }
 
