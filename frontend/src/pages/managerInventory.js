@@ -12,6 +12,8 @@ function ManagerInventory() {
     navigate("/ManagerInterface");
   }
 
+  
+
   return (
         <div id="wrapper">
         <div class="divs" id="div1"><button onClick={toManager} id="back">Manager Home</button></div>
