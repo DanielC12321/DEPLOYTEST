@@ -2,9 +2,24 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+## Backend
+Go to the backend directory by running:
 
-In the project directory, you can run:
+### `cd backend`
+
+In the backend directory, you can run:
+
+### `npm start`
+
+Runs the app in the development mode.
+Open [http://localhost:8001](http://localhost:8001) to view it in your browser.
+
+## Frontend
+Go to the frontend directory by running:
+
+### `cd frontend`
+
+In the frontend directory, you can run:
 
 ### `npm start`
 
