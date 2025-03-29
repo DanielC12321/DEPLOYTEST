@@ -10,6 +10,8 @@ function Cashier() {
   const [size, setSize] = useState('medium');
   const [pearls, setPearls] = useState('standard');
   const [custom, setCustom] = useState('standard');
+  const [orderItems, setOrderItems] = useState([]);
+
 
   const Customize = (ingredient, amount) => {
     if (ingredient === 'sugar') setSugar(amount);
@@ -19,13 +21,28 @@ function Cashier() {
   };
 
   const ConfirmCustom = () => {
-    setOpen(false);
+    
     //submit product to order summary
     //have object that keep track of this and sends it to checkout
     //use the productNum to link with products in database
+    const newItem = {
+      id: Date.now(),
+      product: `Product #${productNum}`,
+      size: size,
+      sugar: sugar,
+      pearls: pearls
+    };
+    setOrderItems([...orderItems, newItem]);
+
+    setOpen(false);
     alert(`You selected: Size: ${size}, Sugar: ${sugar}, and Pearls: ${pearls}`);
   };
 
+  const removeItem = (itemId) => {
+    setOrderItems(orderItems.filter(item => item.id !== itemId));
+  };
+
+  
   const navigate = useNavigate();
 
   const pickProduct = (num) => {
@@ -38,7 +55,21 @@ function Cashier() {
   };
 
   const checkout = () => {
-    navigate("/cashierCheckout");
+    if (orderItems.length > 0) {
+      navigate("/cashierCheckout", { 
+        state: { 
+          orderItems: orderItems.map(item => ({
+            productNum: parseInt(item.product.split('#')[1]),
+            size: item.size,
+            sugar: item.sugar,
+            pearls: item.pearls
+          }))
+        } 
+      });
+    } else {
+      alert("Please add items to your order first.");
+    }
+  
   };
 
   return (
@@ -46,8 +77,8 @@ function Cashier() {
         <div class="divs" id="div1"><button onClick={logout} id="back">Logout</button></div>
         <div class="divs" id="div2"><h1 id="header">Create Order</h1>
         </div>
-        <div class="divs" id="div3"><a>Div</a></div>
-        <div class="divs" id="div4"><a>Div</a></div>
+        <div class="divs" id="div3"><a>DIVVV</a></div>
+        <div class="divs" id="div4"> Div</div>
         <div class="divs" id="div5">
         {!Open &&
         <div class="menutable">
@@ -115,8 +146,27 @@ function Cashier() {
             </div>
           )}
         </div>
-        <div class="divs" id="div6"><a>Div</a></div>
-        <div class="divs" id="div7"><a>Div</a></div>
+        <div class="divs" id="div6">
+          <div className="order-list">
+              <h3>Order List</h3>
+              {orderItems.length === 0 ? (
+                <p>No items in order</p>
+              ) : (
+                orderItems.map(item => (
+                  <div key={item.id} className="order-item">
+                    <div className="order-header">
+                      <span>{item.product}</span>
+                      <button onClick={() => removeItem(item.id)}>✕</button>
+                    </div>
+                    <div className="order-details">
+                      Size: {item.size}, Sugar: {item.sugar}, Pearls: {item.pearls}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+        </div>
+        <div class="divs" id="div7"><a>Diva</a></div>
         <div class="divs" id="div8">Item Selected: Product #{productNum}</div>
         <div class="divs" id="div9"><button onClick={checkout} id="back">Checkout</button></div>
         </div>
