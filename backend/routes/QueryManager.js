@@ -18,6 +18,18 @@ class QueryManager {
                      JOIN ingredients i ON pu.ingredientid = i.ingredientid
             ORDER BY i.name;
         `,
+        "sales-report": `
+            SELECT
+                p.name AS product_name,
+                SUM(cp.quantity) AS total_quantity_sold,
+                SUM(cp.quantity * p.product_cost::numeric) AS total_sales
+            FROM customer_order co
+            JOIN customer_product cp ON co.order_id = cp.order_id
+            JOIN product p ON cp.product_id = p.product_id
+            WHERE co.datetime BETWEEN $1 AND $2
+            GROUP BY p.name
+            ORDER BY p.name;
+        `,
         "debug-tables": `
             SELECT
                 table_name,
