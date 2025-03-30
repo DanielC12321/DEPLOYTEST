@@ -35,6 +35,14 @@ class QueryManager {
         "product-table": "SELECT * FROM product;",
         "ingredient-table": "SELECT * FROM ingredients;",
         "add-product": "INSERT INTO product (name, product_cost) VALUES ($1, $2) RETURNING product_id;",
+        "employee-names": "SELECT name FROM cashier ORDER BY name;",
+        "get-employee-id": "SELECT cashierid FROM cashier WHERE name = $1;",
+        "fire-employee": "DELETE FROM cashier WHERE cashierid = $1;",
+        "add-employee": "INSERT INTO cashier (name, address, email, phonenumber, password) VALUES ($1, $2, $3, $4, $5) RETURNING cashierid;",
+        "cashier-performances": "SELECT c.cashierid, c.name, COUNT(co.order_id) AS total_orders, SUM(co.total_cost) AS total_sales FROM cashier c LEFT JOIN customer_order co ON c.cashierid = co.cashierid GROUP BY c.cashierid, c.name ORDER BY total_sales DESC;",
+        "get-manager-creds": "SELECT managerid, name, address, email, phonenumber, password FROM manager WHERE managerid = $1;",
+        "get-cashier-creds": "SELECT cashierid, name, address, email, phonenumber, password FROM cashier WHERE cashierid = $1;",
+
     };
 }
 
