@@ -30,6 +30,32 @@ class QueryManager {
             GROUP BY p.name
             ORDER BY p.name;
         `,
+        "x-report-sales": `
+            SELECT
+            EXTRACT(HOUR FROM datetime)::int AS hour, 
+            SUM(total_cost::numeric) AS sales
+            FROM customer_order
+            WHERE datetime::date = $1
+            AND EXTRACT(HOUR FROM datetime)::int <= $2
+            GROUP BY hour
+            ORDER BY hour;
+        `,
+        "x-report-adjustments": `
+            SELECT
+            SUM("return"::numeric) AS returns,
+            SUM("void"::numeric) AS voids,
+            SUM(discard::numeric) AS discards
+            FROM customer_order
+            WHERE datetime::date = $1
+            AND EXTRACT(HOUR FROM datetime)::int <= $2;
+        `,
+        "x-report-payment-methods": `
+            SELECT payment_method, SUM(total_cost::numeric) AS total
+            FROM customer_order
+            WHERE datetime::date = $1
+            AND EXTRACT(HOUR FROM datetime)::int <= $2
+            GROUP BY payment_method;
+        `,
         "debug-tables": `
             SELECT
                 table_name,
