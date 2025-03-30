@@ -62,6 +62,12 @@ const formatPaymentMethod = (method: string): string => {
     }
 };
 
+/**
+ * Exported setter function that external classes (like Z Report) can call
+ * to zero out (or unzero) the X Report.
+ */
+export let setXReportZeroed: (zero: boolean) => void = () => {};
+
 const XReport: React.FC = () => {
     const [currentDay, setCurrentDay] = useState<string>("02-17-2025");
     const [currentHour, setCurrentHour] = useState<number>(14);
@@ -72,9 +78,25 @@ const XReport: React.FC = () => {
         datasets: [],
     });
     const [paymentMethods, setPaymentMethods] = useState<any[]>([]);
+    // Flag to determine if the X report is zeroed out.
+    const [isZeroed, setIsZeroed] = useState<boolean>(false);
+
+    // Expose the setter so external modules can control the zero flag.
+    useEffect(() => {
+        setXReportZeroed = setIsZeroed;
+    }, []);
+
+    // When the report becomes unzeroed, reload data automatically.
+    useEffect(() => {
+        if (!isZeroed) {
+            loadData();
+        }
+    }, [isZeroed]);
 
     // Fetch data from API and update the chart
     const loadData = async () => {
+        // If the report is zeroed out, skip data loading.
+        if (isZeroed) return;
         const apiUrl = process.env.REACT_APP_API_URL;
 
         try {
@@ -141,6 +163,12 @@ const XReport: React.FC = () => {
         });
     };
 
+    // Prepare displayed data based on the zero flag.
+    const displayedReportData = isZeroed ? [] : reportData;
+    const displayedAdjustments = isZeroed ? { returns: 0, voids: 0, discards: 0 } : adjustmentsData;
+    const displayedChartData = isZeroed ? { labels: [], datasets: [] } : chartData;
+    const displayedPaymentMethods = isZeroed ? [] : paymentMethods;
+
     return (
         <div>
             {/* Static Navbar */}
@@ -176,7 +204,7 @@ const XReport: React.FC = () => {
                     </Link>
                 </div>
 
-                {/* Date Pickers */}
+                {/* Controls: Date Picker, Load Data, and Unzero button */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '10px' }}>
                     <div>
                         <label>Current Day: </label>
@@ -187,6 +215,7 @@ const XReport: React.FC = () => {
                         />
                     </div>
                     <button onClick={loadData}>Load Data</button>
+                    <button onClick={() => setIsZeroed(false)}>Reset X Report</button>
                 </div>
             </header>
 
@@ -205,10 +234,10 @@ const XReport: React.FC = () => {
                     backgroundColor: '#f9f9f9',
                     padding: '10px'
                 }}>
-                    <h3>Adjustments (Receipts)</h3>
-                    <p><strong>Returns:</strong> ${adjustmentsData.returns}</p>
-                    <p><strong>Voids:</strong> ${adjustmentsData.voids}</p>
-                    <p><strong>Discards:</strong> ${adjustmentsData.discards}</p>
+                    <h3>Adjustments</h3>
+                    <p><strong>Returns:</strong> ${displayedAdjustments.returns}</p>
+                    <p><strong>Voids:</strong> ${displayedAdjustments.voids}</p>
+                    <p><strong>Discards:</strong> ${displayedAdjustments.discards}</p>
                     <hr style={{ margin: '20px 0' }} />
                     <h3>Payment Methods</h3>
                     <table style={{ width: '100%', borderCollapse: 'collapse' }} border={1}>
@@ -219,7 +248,7 @@ const XReport: React.FC = () => {
                         </tr>
                         </thead>
                         <tbody>
-                        {paymentMethods.map((method, index) => (
+                        {displayedPaymentMethods.map((method, index) => (
                             <tr key={index}>
                                 <td>{formatPaymentMethod(method.payment_method)}</td>
                                 <td>${method.total}</td>
@@ -239,7 +268,7 @@ const XReport: React.FC = () => {
                         </tr>
                         </thead>
                         <tbody>
-                        {reportData.map((row, index) => (
+                        {displayedReportData.map((row, index) => (
                             <tr key={index}>
                                 <td>{convertHour(row.hour)}</td>
                                 <td>${row.sales}</td>
@@ -252,7 +281,7 @@ const XReport: React.FC = () => {
                 {/* Right Column: Bar Chart */}
                 <div style={{ flex: 1, minWidth: '250px', height: '500px', border: '1px solid #ccc', padding: '10px' }}>
                     <Bar
-                        data={chartData}
+                        data={displayedChartData}
                         options={{
                             responsive: true,
                             maintainAspectRatio: false,
