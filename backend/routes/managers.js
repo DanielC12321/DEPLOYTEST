@@ -133,6 +133,7 @@ router.get('/employee_credentials', async (req, res) => {
   "cost": 19.99
 }
 */
+//TODO: need to link ingredients to product
 router.post('/add_product', async (req, res) => {
   // Logic to add a product
   try {
