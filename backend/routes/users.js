@@ -29,7 +29,13 @@ router.get('/one_product', async (req, res) => {
     res.status(500).json({ error: 'Product information query failed' });
   }
 });
-
+//http://localhost:8001/users/update_product
+/*
+{
+    "name":"TaroMilk Tea",
+    "cost":8
+}
+    */
 router.put('/update_product', async (req, res) => {
   const {name, cost} = req.body;
   if (!name || !cost) {
@@ -43,7 +49,12 @@ router.put('/update_product', async (req, res) => {
     res.status(500).json({ error: 'Update product query failed' });
   }
 });
-
+//http://localhost:8001/users/delete_product
+/*
+{
+    "name":"Product Name"
+}
+    */
 router.delete('/delete_product', async (req, res) => {
   const { name } = req.body;  
   if (!name) {
