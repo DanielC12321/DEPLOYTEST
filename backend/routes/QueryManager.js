@@ -42,7 +42,10 @@ class QueryManager {
         "cashier-performances": "SELECT c.cashierid, c.name, COUNT(co.order_id) AS total_orders, SUM(co.total_cost) AS total_sales FROM cashier c LEFT JOIN customer_order co ON c.cashierid = co.cashierid GROUP BY c.cashierid, c.name ORDER BY total_sales DESC;",
         "get-manager-creds": "SELECT managerid, name, address, email, phonenumber, password FROM manager WHERE managerid = $1;",
         "get-cashier-creds": "SELECT cashierid, name, address, email, phonenumber, password FROM cashier WHERE cashierid = $1;",
-
+        "get-ingredient-information": "SELECT ingredientid, cost, name, quantity FROM ingredients WHERE LOWER(name) = LOWER($1);",
+        "add-ingredient": "INSERT INTO ingredients (name, cost, quantity) VALUES ($1, $2, $3) RETURNING ingredientid;",
+        "last-10-orders": "SELECT * FROM customer_order ORDER BY order_id DESC LIMIT 10;",
+        "get-product-information": "SELECT product_id, name, product_cost FROM product WHERE LOWER(name) = LOWER($1);"
     };
 }
 

@@ -127,6 +127,87 @@ router.get('/employee_credentials', async (req, res) => {
     res.status(500).json({ error: 'Database query failed' });
   }
 });
+//Use postman For link: http://localhost:8001/users/add_product 
+/* For body {
+  "name": "Product Name",
+  "cost": 19.99
+}
+*/
+router.post('/add_product', async (req, res) => {
+  // Logic to add a product
+  try {
+      const {name, cost} = req.body;
+      if(!name || !cost){
+          return res.status(400).send('Name and cost are required!');
+      }
+      const result = await Database.executeQuery('add-product', [name, cost]);
+      res.status(201).json(result);
+  }
+  catch(err){
+      res.status(500).send('Error adding product!');
+  }
+});
 
 
+//http://localhost:8001/ingredient_information?ingredientname=milk
+router.get('/ingredient_information', async (req, res) => {
+  const { ingredientname } = req.query;
+
+  if (!ingredientname) {
+    return res.status(400).json({ error: 'Missing ingredient name' });
+  }
+  try{
+    const data = await Database.executeQuery('get-ingredient-information', [ingredientname]);
+    res.json(data);
+  }
+  catch(err){
+    res.status(500).json({ error: 'ingredient information query failed' });
+  }
+
+});
+
+router.put('/update_ingredient', async (req, res) => {
+  const { name, value, field} = req.body;
+
+  if (!name|| !value || !field) {
+    return res.status(400).json({ error: 'Missing ingredient details' });
+  }
+
+  try {
+    const data = await Database.executeCustomQuery(`UPDATE ingredients SET ${field} = $2 WHERE LOWER(name) = LOWER($1);`, [name, value]);
+    res.json("Update Successful");
+  } catch (err) {
+    res.status(500).json({ error: 'Update ingredient query failed' });
+  }
+});
+
+router.post('/add_ingredient', async (req, res) => {
+  const { name, cost, quantity } = req.body;
+
+  if (!name || !cost || !quantity) {
+    return res.status(400).json({ error: 'Missing ingredient details' });
+  }
+
+  try {
+    const data = await Database.executeQuery('add-ingredient', [name, cost, quantity]);
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: 'Add ingredient query failed' });
+  }
+});
+
+router.delete('/delete_ingredient', async (req, res) => {
+  const { name } = req.body;
+
+  if (!name) {
+    return res.status(400).json({ error: 'Missing ingredient name' });
+  }
+
+  try {
+    const data = await Database.executeCustomQuery('DELETE FROM ingredients WHERE LOWER(name) = LOWER($1);', [name]);
+    res.json("Ingredient Deleted");
+  } catch (err) {
+    res.status(500).json({ error: 'Delete ingredient query failed' });
+  }
+});
 module.exports = router;
