@@ -77,7 +77,7 @@ function Login() {
   };
 
   return (
-    <GoogleOAuthProvider clientId="241279205661-q419d1qfof7thoo781vdd359575ctlkb.apps.googleusercontent.com">
+    <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
       <div className="container">
         <h1 className="title">ShareTea</h1>
         <div className="login-box">
