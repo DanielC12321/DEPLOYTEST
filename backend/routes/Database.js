@@ -44,6 +44,20 @@ class Database {
             throw error;
         }
     }
+    async executeCustomQuery(query, params = []) {
+        if (!query) {
+            console.log(`Query not found: ${queryName}`);
+            throw new Error(`Query "${queryName}" not found.`);
+        }
+
+        try {
+            const result = await this.pool.query(query, params);
+            return result.rows;
+        } catch (error) {
+            console.error(`Error executing query "${queryName}":`, error);
+            throw error;
+        }
+    }
 }
 
 // Create and export the singleton instance of Database

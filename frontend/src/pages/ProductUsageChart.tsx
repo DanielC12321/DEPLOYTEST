@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Bar } from 'react-chartjs-2';
@@ -11,9 +12,10 @@ import {
     Tooltip,
     Legend,
 } from 'chart.js';
+import zoomPlugin from 'chartjs-plugin-zoom';
 
-// Register Chart.js components
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+// Register Chart.js components and the zoom plugin
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, zoomPlugin);
 
 interface UsageData {
     ingredient_name: string;
@@ -21,7 +23,6 @@ interface UsageData {
 }
 
 const ProductUsageChart: React.FC = () => {
-    // Set initial state dates. Adjust these defaults as needed.
     const [startDate, setStartDate] = useState<Date>(new Date('2025-02-01'));
     const [endDate, setEndDate] = useState<Date>(new Date());
     const [data, setData] = useState<UsageData[]>([]);
@@ -55,6 +56,9 @@ const ProductUsageChart: React.FC = () => {
         }
     };
 
+    useEffect(() => {
+        loadData();
+    }, []); // Run once on component mount
 
     // Update chart dataset based on new data
     const updateChart = (usageData: UsageData[]) => {
@@ -90,90 +94,139 @@ const ProductUsageChart: React.FC = () => {
     };
 
     return (
-        <div style={{ padding: '20px' }}>
-            {/* Top Panel: Navigation and Date Selection */}
-            <div style={{ marginBottom: '20px' }}>
-                {/* Navigation Panel Placeholder */}
-                <div style={{ marginBottom: '10px' }}>
-                    <strong>Trend Navigation Bar (Placeholder)</strong>
+        <div>
+            {/* Static Navbar */}
+            <header
+                style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    backgroundColor: '#fff',
+                    zIndex: 1000,
+                    padding: '10px',
+                    borderBottom: '1px solid #ccc',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                }}
+            >
+                {/* Button Container */}
+                <div style={{display: 'flex', gap: '10px', justifyContent: 'center'}}>
+                    <Link to="/manager">
+                        <button>Back to Manager</button>
+                    </Link>
+                    <Link to="/manager/productusagechart">
+                        <button>Product Usage Chart</button>
+                    </Link>
+                    <Link to="/manager/salesreport">
+                        <button>Sales Report</button>
+                    </Link>
+                    <Link to="/manager/xreport">
+                        <button>X Report</button>
+                    </Link>
+                    <Link to="/manager/zreport">
+                        <button>Z Report</button>
+                    </Link>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+
+                {/* Date Pickers */}
+                <div style={{display: 'flex', alignItems: 'center', gap: '10px', marginTop: '10px'}}>
                     <div>
                         <label>Start Date: </label>
                         <DatePicker
                             selected={startDate}
-                            onChange={(date: Date) => setStartDate(date!)}  // Ensuring a non-null value
+                            onChange={(date: Date) => setStartDate(date!)}
                             dateFormat="yyyy-MM-dd"
-                            maxDate={endDate}  // Optional: ensures start date is not after end date
+                            maxDate={endDate}
                         />
                     </div>
                     <div>
                         <label>End Date: </label>
                         <DatePicker
                             selected={endDate}
-                            onChange={(date: Date) => setEndDate(date!)}  // Ensuring a non-null value
+                            onChange={(date: Date) => setEndDate(date!)}
                             dateFormat="yyyy-MM-dd"
-                            minDate={startDate}  // Optional: ensures end date is not before start date
+                            minDate={startDate}
                         />
                     </div>
                     <button onClick={loadData}>Load Data</button>
                 </div>
+            </header>
+
+            {/* Page Title */}
+            <div style={{marginTop: '100px', textAlign: 'center'}}>
+                <h1>Product Usage Chart</h1>
             </div>
 
-            {/* Main Content: Table and Chart Side-by-Side */}
-            <div style={{ display: 'flex', gap: '20px' }}>
-                {/* Data Table */}
-                <div style={{ flex: 1 }}>
-                    <table style={{ width: '100%', borderCollapse: 'collapse' }} border={1}>
-                        <thead>
-                        <tr>
-                            <th>Ingredient Name</th>
-                            <th>Total Used</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {data.map((row, index) => (
-                            <tr key={index}>
-                                <td>{row.ingredient_name}</td>
-                                <td>{row.total_used}</td>
+            {/* Main Content - with top margin to avoid overlap */}
+            <div style={{marginTop: '20px', padding: '10px'}}>
+                <div style={{display: 'flex', gap: '20px'}}>
+                    {/* Data Table */}
+                    <div style={{flex: 1, maxHeight: '400px', overflowY: 'auto', border: '1px solid #ccc'}}>
+                        <table style={{width: '100%', borderCollapse: 'collapse'}} border={1}>
+                            <thead style={{position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 10}}>
+                            <tr>
+                                <th>Ingredient Name</th>
+                                <th>Total Used</th>
                             </tr>
-                        ))}
-                        </tbody>
-                    </table>
-                </div>
+                            </thead>
+                            <tbody>
+                            {data.map((row, index) => (
+                                <tr key={index}>
+                                    <td>{row.ingredient_name}</td>
+                                    <td>{row.total_used}</td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </table>
+                    </div>
 
-                {/* Bar Chart */}
-                <div style={{ flex: 1 }}>
-                    <Bar
-                        data={chartData}
-                        options={{
-                            responsive: true,
-                            plugins: {
-                                legend: { display: false },
-                                tooltip: { enabled: true },
-                            },
-                            scales: {
-                                y: { beginAtZero: true },
-                                x: {
-                                    ticks: {
-                                        autoSkip: false,
-                                        maxRotation: 45,
-                                        minRotation: 45,
+                    {/* Bar Chart */}
+                    <div style={{flex: 1, height: '500px'}}>
+                        <Bar
+                            data={chartData}
+                            options={{
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {display: false},
+                                    tooltip: {enabled: true},
+                                    zoom: {
+                                        pan: {
+                                            enabled: true,
+                                            mode: 'x',
+                                        },
+                                        zoom: {
+                                            wheel: {enabled: true},
+                                            pinch: {enabled: true},
+                                            mode: 'x',
+                                        },
                                     },
                                 },
-                            },
-                        }}
-                    />
+                                scales: {
+                                    y: {beginAtZero: true},
+                                    x: {
+                                        ticks: {
+                                            autoSkip: false,
+                                            maxRotation: 45,
+                                            minRotation: 45,
+                                        },
+                                    },
+                                },
+                            }}
+                        />
+                    </div>
                 </div>
-            </div>
 
-            {/* Sort Panel */}
-            <div style={{ marginTop: '20px' }}>
-                <label>Sort By: </label>
-                <select value={sortOrder} onChange={handleSortChange}>
-                    <option value="asc">Sort: Low to High</option>
-                    <option value="desc">Sort: High to Low</option>
-                </select>
+                {/* Sort Panel */}
+                <div style={{marginTop: '20px'}}>
+                    <label>Sort By: </label>
+                    <select value={sortOrder} onChange={handleSortChange}>
+                        <option value="asc">Sort: Low to High</option>
+                        <option value="desc">Sort: High to Low</option>
+                    </select>
+                </div>
             </div>
         </div>
     );

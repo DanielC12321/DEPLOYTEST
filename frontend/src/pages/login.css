@@ -63,7 +63,7 @@ body {
     border-color: #dc2626;
   }
   
-  .login-button {
+  .button {
     width: 80%;
     background: black;
     color: white;
@@ -74,9 +74,10 @@ body {
     transition: background 0.3s;
     text-align: center;
     font-size: 2vh;
+    margin-bottom: 1vh;
   }
   
-  .login-button:hover {
+  .button:hover {
     background: #333;
   }
   

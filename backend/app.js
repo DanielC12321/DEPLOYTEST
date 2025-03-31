@@ -4,7 +4,7 @@ var cors = require('cors');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-
+var loginDBRouter = require('./routes/loginDB');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
@@ -30,7 +30,7 @@ var productUsageRouter = require('./routes/managers');
 app.use('/', productUsageRouter);
 
 // Put custom endpoints here
-
+app.use('/api/loginDB', loginDBRouter);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
