@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import CategoryPanel from './CustomerComponents/CategoryPanel';
-import './customer.css';
+import styles from './customer.module.css';
 
 import milkTeaBackground from './CustomerComponents/milk-tea-4658495.jpg';
 import pureTeaBackground from './CustomerComponents/tea-1869716.jpg';
@@ -12,7 +12,7 @@ function Customer() {
     const navigate = useNavigate();
 
     return (
-        <div className='container'>
+        <div className={styles.container}>
             <CategoryPanel 
         title="Milk Teas" 
         background={milkTeaBackground}
