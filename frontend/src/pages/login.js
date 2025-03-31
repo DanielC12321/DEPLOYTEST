@@ -12,7 +12,6 @@ function Login() {
     cashier: { username: "cashier", password: "cashier123" },
     manager: { username: "manager", password: "manager123" },
   };
-
   const handleLogin = (e) => {
     e.preventDefault();
 
