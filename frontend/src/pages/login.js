@@ -39,7 +39,7 @@ function Login() {
   
     try {
       // Send the token to the backend for verification
-      const response = await fetch("http://localhost:8001/api/loginDB/verify", {
+      const response = await fetch("https://deploytest-backend-qjxx.onrender.com/api/loginDB/verify", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
