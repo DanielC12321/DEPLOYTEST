@@ -17,7 +17,7 @@ function ManagerInventory() {
   const [ingredients, setIngredients] = useState([]);
 
   useEffect(() => {
-    fetch("https://deploytest-backend-p9h3.onrender.com/users/product_table")
+    fetch("https://deploytest-backend-qjxx.onrender.com/users/product_table")
     .then(response => response.json())
     .then(json => {
       setProducts(json)
@@ -27,7 +27,7 @@ function ManagerInventory() {
   }, []);
 
 useEffect(() => {
-  fetch("https://deploytest-backend-p9h3.onrender.com/users/ingredient_table")
+  fetch("https://deploytest-backend-qjxx.onrender.com/users/ingredient_table")
   .then(response => response.json())
   .then(json => {
     setIngredients(json)
