@@ -5,6 +5,7 @@ import './App.css';
 import Cashier from './pages/cashier';
 import Customer from './pages/customer';
 import Login from './pages/login';
+import CashierCheckout from './pages/cashierCheckout';
 import ManagerInterface from './pages/ManagerInterface.tsx';
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/cashier" element={<Cashier />} />
           <Route path="/customer" element={<Customer />} />
+          <Route path="/cashierCheckout" element={<CashierCheckout />} />
           <Route path="/manager" element={<ManagerInterface />} />
         </Routes>
       </div>
