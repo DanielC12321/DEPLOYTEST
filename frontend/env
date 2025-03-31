@@ -1,3 +1,0 @@
-# Change to the API URL for production when shipping to production https://your-app-backend.onrender.com
-REACT_APP_API_URL=http://localhost:8001
-REACT_APP_GOOGLE_CLIENT_ID=241279205661-q419d1qfof7thoo781vdd359575ctlkb.apps.googleusercontent.com
