@@ -1,0 +1,16 @@
+.container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 equal columns */
+  grid-template-rows: 1fr; /* 1 row instead of 4 */
+  height: 100vh; /* Full viewport height */
+  width: 100vw; /* Full viewport width */
+  overflow: hidden; /* Prevent scrollbars */
+  gap: 0; /* No gap between panels */
+}
+body {
+  background-color: black; /* Set the background color to black */
+  color: white; /* Optional: Set the text color to white for better contrast */
+  margin: 0; /* Remove default margin */
+  padding: 0; /* Remove default padding */
+  font-family: Arial, sans-serif; /* Optional: Set a default font */
+}
