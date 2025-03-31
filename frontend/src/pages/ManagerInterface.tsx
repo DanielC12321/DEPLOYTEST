@@ -60,8 +60,8 @@ class ManagerInterface extends React.Component<{}, ManagerInterfaceState> {
                 </div>
                 <div>{this.renderReport()}</div>
             </div>
-        );
-    }
-}
+        </div>
+    );
+};
 
 export default ManagerInterface;
