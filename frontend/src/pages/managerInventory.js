@@ -10,10 +10,11 @@ function ManagerInventory() {
   const navigate = useNavigate();
 
   const toManager = () => {
-    navigate("/ManagerInterface");
+    navigate("/manager");
   }
 
   const [products, setProducts] = useState([]);
+  const [ingredients, setIngredients] = useState([]);
 
   useEffect(() => {
     fetch("http://localhost:8001/users/product_table")
@@ -25,62 +26,62 @@ function ManagerInventory() {
     .catch((error) => console.error("Could not fetch data"));
   }, []);
 
-  const data = [
-    { product: 'Milk', price: 1, quantity: -1 },
-    { product: 'Tea', price: 2, quantity: -2 },
-    { product: 'Juice', price: 3, quantity: -3 },
-    { product: 'Milk', price: 1, quantity: -1 },
-    { product: 'Tea', price: 2, quantity: -2 },
-    { product: 'Juice', price: 3, quantity: -3 },    
-    { product: 'Milk', price: 1, quantity: -1 },
-    { product: 'Tea', price: 2, quantity: -2 },
-    { product: 'Juice', price: 3, quantity: -3 },   
-    { product: 'Milk', price: 1, quantity: -1 },
-    { product: 'Tea', price: 2, quantity: -2 },
-    { product: 'Juice', price: 3, quantity: -3 },  
-    { product: 'Milk', price: 1, quantity: -1 },
-    { product: 'Tea', price: 2, quantity: -2 },
-    { product: 'Juice', price: 3, quantity: -3 },   
-    { product: 'Milk', price: 1, quantity: -1 },
-    { product: 'Tea', price: 2, quantity: -2 },
-    { product: 'Juice', price: 3, quantity: -3 },  
-    { product: 'Milk', price: 1, quantity: -1 },
-    { product: 'Tea', price: 2, quantity: -2 },
-    { product: 'Juice', price: 3, quantity: -3 },
-    { product: 'Milk', price: 1, quantity: -1 },
-    { product: 'Tea', price: 2, quantity: -2 },
-    { product: 'Juice', price: 3, quantity: -3 },   
-    { product: 'Milk', price: 1, quantity: -1 },
-    { product: 'Tea', price: 2, quantity: -2 },
-    { product: 'Juice', price: 3, quantity: -3 },   
-    { product: 'Milk', price: 1, quantity: -1 },
-    { product: 'Tea', price: 2, quantity: -2 },
-    { product: 'Juice', price: 3, quantity: -3 },    
-    { product: 'Milk', price: 1, quantity: -1 },
-    { product: 'Tea', price: 2, quantity: -2 },
-    { product: 'Juice', price: 3, quantity: -3 },   
-    { product: 'Milk', price: 1, quantity: -1 },
-    { product: 'Tea', price: 2, quantity: -2 },
-    { product: 'Juice', price: 3, quantity: -3 },
-];
+useEffect(() => {
+  fetch("http://localhost:8001/users/ingredient_table")
+  .then(response => response.json())
+  .then(json => {
+    setIngredients(json)
+    console.log(json)
+})
+  .catch((error) => console.error("Could not fetch data"));
+}, []);
 
-const CreateTable = () => {
+
+const ProductTable = () => {
 
   return(
       <table class="tables">
         <thead>
           <tr>
+            <th>ID</th>
             <th>Product</th>
             <th>Price</th>
-            <th>Quantity</th>
           </tr>
         </thead>
         <tbody>
           {products.map((entry, i) => (
             <tr key={i}>
-              <td>{entry.product}</td>
-              <td>{entry.price}</td>
+              <td>{entry.product_id}</td>
+              <td>{entry.name}</td>
+              <td>{entry.product_cost}</td>
+            </tr>
+          ))
+          }
+        </tbody>
+      </table>
+
+  );
+};
+
+const IngredientTable = () => {
+
+  return(
+      <table class="tables">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Cost</th>
+          </tr>
+        </thead>
+        <tbody>
+          {ingredients.map((entry, i) => (
+            <tr key={i}>
+              <td>{entry.ingredientid}</td>
+              <td>{entry.name}</td>
               <td>{entry.quantity}</td>
+              <td>{entry.cost}</td>
             </tr>
           ))
           }
@@ -99,10 +100,10 @@ const CreateTable = () => {
         <div class="divs" id="div5">
           <div class="TableDivs">
             <div class="scrolltable"><h2>Products</h2>
-              <CreateTable />
+              <ProductTable data={products}/>
             </div>
             <div class="scrolltable"><h2>Ingredients</h2>
-              <CreateTable data={products}/>
+              <IngredientTable data={ingredients}/>
             </div>
          </div>
         </div>
