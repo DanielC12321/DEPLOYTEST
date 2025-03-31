@@ -1,12 +1,12 @@
 #wrapper {
     width: 100vw;
-    height: 100vh;
+    height: 90vh;
     margin: 0;
     padding: 0;
     overflow: hidden;
     display: grid;
-    grid-template-columns: 1fr 1050px 1fr;
-    grid-template-rows: 90px 520px 1fr;
+    grid-template-columns: 1fr 1150px 1fr;
+    grid-template-rows: 90px 600px 1fr;
 }
 
 .divs {
@@ -38,4 +38,39 @@
     font-size: 50px;
     padding: 0px;
     margin: 10px;
+}
+
+.TableDivs {
+    display: flex;
+    justify-content: space-evenly;
+    justify-items:center;
+    height: 475px;
+    border: 2px solid black;
+    }
+
+.scrolltable {
+    height: 475px;
+    overflow-y: scroll;
+}
+
+.tables {
+    width: 525px;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.tables td {
+    text-align: left;
+    border: 2px solid black;
+    padding: 5px;
+
+}
+
+.tables th {
+    background-color: rgb(239, 136, 123);
+    position: sticky;
+    border: 2px solid black;
+    border-top: 0;
+    z-index: 1;
+    top: 0;
 }
