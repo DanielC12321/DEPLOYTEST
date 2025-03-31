@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import "./managerInventory.css";
 
 
@@ -11,6 +12,18 @@ function ManagerInventory() {
   const toManager = () => {
     navigate("/ManagerInterface");
   }
+
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    fetch("http://localhost:8001/users/product_table")
+    .then(response => response.json())
+    .then(json => {
+      setProducts(json)
+      console.log(json)
+  })
+    .catch((error) => console.error("Could not fetch data"));
+  }, []);
 
   const data = [
     { product: 'Milk', price: 1, quantity: -1 },
@@ -63,7 +76,7 @@ const CreateTable = () => {
           </tr>
         </thead>
         <tbody>
-          {data.map((entry, i) => (
+          {products.map((entry, i) => (
             <tr key={i}>
               <td>{entry.product}</td>
               <td>{entry.price}</td>
@@ -89,7 +102,7 @@ const CreateTable = () => {
               <CreateTable />
             </div>
             <div class="scrolltable"><h2>Ingredients</h2>
-              <CreateTable />
+              <CreateTable data={products}/>
             </div>
          </div>
         </div>
