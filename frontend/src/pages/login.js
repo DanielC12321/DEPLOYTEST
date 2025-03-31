@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
-import { jwtDecode } from "jwt-decode"; // To decode the JWT token
 import "./login.css";
 
 function Login() {
@@ -36,11 +35,40 @@ function Login() {
     navigate("/customer");
   };
 
-  const handleGoogleSuccess = (credentialResponse) => {
-    const decoded = jwtDecode(credentialResponse.credential);
-    console.log("Google Login Success:", decoded);
-    // Redirect to a specific page after successful Google login
-    navigate("/customer");
+  const handleGoogleSuccess = async (credentialResponse) => {
+    const token = credentialResponse.credential;
+  
+    try {
+      // Send the token to the backend for verification
+      const response = await fetch("http://localhost:8001/api/loginDB/verify", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token }),
+      });
+  
+      if (response.ok) {
+        const data = await response.json();
+        console.log("User Info from Backend:", data);
+  
+        // Redirect the user based on their role
+        if (data.user.role === "cashier") {
+          navigate("/cashier");
+        } else if (data.user.role === "manager") {
+          navigate("/manager");
+        } else {
+          alert("Unknown role. Please contact support.");
+        }
+      } else {
+        const errorData = await response.json();
+        console.error("Error from backend:", errorData.error);
+        alert("Login failed: " + errorData.error);
+      }
+    } catch (error) {
+      console.error("Error during Google login:", error);
+      alert("An error occurred during login. Please try again.");
+    }
   };
 
   const handleGoogleFailure = () => {
@@ -75,10 +103,10 @@ function Login() {
                 required
               />
             </div>
-            <button type="submit" className="login-button">
-              LOGIN
+            <button type="submit" className="button">
+              Login
             </button>
-            <button onClick={handleCustomer} className="customer-button">
+            <button onClick={handleCustomer} className="button">
               Continue as Customer
             </button>
           </form>
