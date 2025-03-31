@@ -1,12 +1,12 @@
 #wrapper {
     width: 100vw;
-    height: 90vh;
+    height: 100vh;
     margin: 0;
     padding: 0;
     overflow: hidden;
     display: grid;
     grid-template-columns: 1fr 1150px 1fr;
-    grid-template-rows: 90px 600px 1fr;
+    grid-template-rows: 90px 515px 1fr;
 }
 
 .divs {

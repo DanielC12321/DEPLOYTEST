@@ -7,7 +7,7 @@ function CashierCheckout() {
   const orderItems = location.state?.orderItems || [];
   
   return (
-    <div id="wrapper">
+    <div class="wrapper">
       <div className="checkout-order">
         <h2>Order List</h2>
         {orderItems.length === 0 ? (
