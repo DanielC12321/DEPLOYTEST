@@ -15,6 +15,11 @@ function ManagerInventory() {
 
   const [products, setProducts] = useState([]);
   const [ingredients, setIngredients] = useState([]);
+  const [currproduct, setcurrProduct] = useState(null);
+  const [curringredient, setcurrIngredient] = useState(null);
+  const [openProduct, setopenProduct] = useState(false);
+  const [openIngredient, setopenIngredient] = useState(false);
+
 
   useEffect(() => {
     fetch("http://localhost:8001/users/product_table")
@@ -36,11 +41,28 @@ useEffect(() => {
   .catch((error) => console.error("Could not fetch data"));
 }, []);
 
+const productSelect = (id, name, price) => {
+  setcurrProduct({id, name, price});
+  setopenIngredient(false);
+  setopenProduct(true);
+
+};
+
+const ingredientSelect = (id, name, quant, cost) => {
+  setcurrIngredient({id, name, quant, cost});
+  setopenProduct(false);
+  setopenIngredient(true);
+  
+};
+
+
+
+
 
 const ProductTable = () => {
 
   return(
-      <table class="tables">
+      <table class="tables" id="table1">
         <thead>
           <tr>
             <th>ID</th>
@@ -50,9 +72,9 @@ const ProductTable = () => {
         </thead>
         <tbody>
           {products.map((entry, i) => (
-            <tr key={i}>
+            <tr class="rows" key={i}>
               <td>{entry.product_id}</td>
-              <td>{entry.name}</td>
+              <td><button onClick={() => productSelect(entry.product_id, entry.name, entry.product_cost)} class="select">{entry.name}</button></td>
               <td>{entry.product_cost}</td>
             </tr>
           ))
@@ -66,7 +88,7 @@ const ProductTable = () => {
 const IngredientTable = () => {
 
   return(
-      <table class="tables">
+      <table class="tables" id="table2">
         <thead>
           <tr>
             <th>ID</th>
@@ -77,9 +99,9 @@ const IngredientTable = () => {
         </thead>
         <tbody>
           {ingredients.map((entry, i) => (
-            <tr key={i}>
+            <tr class="rows" key={i}>
               <td>{entry.ingredientid}</td>
-              <td>{entry.name}</td>
+              <td><button onClick={() => ingredientSelect(entry.ingredientid, entry.name, entry.quantity, entry.cost)} class="select">{entry.name}</button></td>
               <td>{entry.quantity}</td>
               <td>{entry.cost}</td>
             </tr>
@@ -93,17 +115,69 @@ const IngredientTable = () => {
 
   return (
         <div id="wrapper">
-        <div class="divs" id="div1"><button onClick={toManager} id="back">Manager Home</button></div>
+        <div class="divs" id="div1"><button onClick={toManager} id="back">&lt;= Manager Home</button></div>
         <div class="divs" id="div2"><h1 id="header">Inventory</h1></div>
         <div class="divs" id="div3">Div</div>
-        <div class="divs" id="div4">Div</div>
+
+
+
+        <div class="divs" id="div4">
+          {openProduct &&
+            <div class="update">
+              <h2>Update Products Table</h2>
+              <div id="itemName">Item: {currproduct.name}</div>
+              <div class="attr">
+                <div>Item ID: {currproduct.id}</div><div>Item Price: {currproduct.price}</div>
+                </div>
+                <div class="attr"><button>Update Price</button><button>Remove Product</button></div>
+                <div>Enter New Item Price: <input></input></div>
+              
+              <h3>Add Product</h3>
+                <div>
+                <div>Enter New Item Price: <input></input></div>
+                <div>Enter New Item Price: <input></input></div>
+                <div>Enter New Item Price: <input></input></div>
+                <div><button>Add New Item</button></div>
+
+
+
+                </div>
+              
+
+            </div>
+          }
+          {openIngredient && 
+            <div class="update">
+              <h2>Update Ingredients</h2>
+              <div id="itemName">Item: {curringredient.name}</div>
+              <div class="attr">
+                <div>Item ID: {curringredient.id}</div><div>Item Quantity: {curringredient.quant}</div>Item Cost: <div>{curringredient.cost}</div>
+
+                </div>
+
+
+            </div>
+          }
+
+
+
+        </div>
+
+
+
         <div class="divs" id="div5">
           <div class="TableDivs">
-            <div class="scrolltable"><h2>Products</h2>
-              <ProductTable data={products}/>
+            <div>
+            <h2>Products</h2>
+            <div class="scrolltable">
+              <ProductTable data={products}/>            
             </div>
-            <div class="scrolltable"><h2>Ingredients</h2>
+            </div>
+            <div>
+            <h2>Ingredients</h2>
+            <div class="scrolltable">
               <IngredientTable data={ingredients}/>
+            </div>
             </div>
          </div>
         </div>
