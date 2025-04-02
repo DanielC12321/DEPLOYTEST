@@ -25,7 +25,6 @@ function FruitTea(){
         </div>
 
         <div className={styles.menuContainer}>
-            <h1 className={styles.menuTitle}>Fruit Teas</h1>
             <div className={styles.menuItems}>
                 <ItemPanel
                     item={{
