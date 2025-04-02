@@ -1,0 +1,51 @@
+.item-panel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-size 0.5s ease;
+}
+
+.item-panel:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  background-size: cover;
+}
+
+.item-panel-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  transition: opacity 0.3s ease;
+}
+.item-panel-title {
+  color: white;
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  padding: 0 20px;
+  transition: transform 0.3s ease;
+}
+
+.item-panel-description {
+  color: white;
+  font-size: 1.5rem;
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  padding: 0 20px;
+  transition: transform 0.3s ease;
+}
