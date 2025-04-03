@@ -79,6 +79,60 @@ router.get('/x-report-payment-methods', async (req, res) => {
   }
 });
 
+router.get('/z-report-sales-tax', async (req, res) => {
+  const { start_date, end_date } = req.query;
+
+  if (!start_date || !end_date) {
+    return res.status(400).json({ error: 'Missing start_date or end_date' });
+  }
+
+  try {
+    const data = await Database.executeQuery('z-report-sales-tax', [start_date, end_date]);
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: 'Database query failed' });
+  }
+});
+
+router.get('/z-report-payment-methods', async (req, res) => {
+  const { start_date, end_date } = req.query;
+
+  if (!start_date || !end_date) {
+    return res.status(400).json({ error: 'Missing start_date or end_date' });
+  }
+
+  try {
+    const data = await Database.executeQuery('z-report-payment-methods', [start_date, end_date]);
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: 'Database query failed' });
+  }
+});
+
+router.get('/z-report-adjustments', async (req, res) => {
+  const { start_date, end_date } = req.query;
+
+  if (!start_date || !end_date) {
+    return res.status(400).json({ error: 'Missing start_date or end_date' });
+  }
+
+  try {
+    const data = await Database.executeQuery('z-report-adjustments', [start_date, end_date]);
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: 'Database query failed' });
+  }
+});
+
+router.get('/z-report-manager-names', async (req, res) => {
+  try {
+    const data = await Database.executeQuery('z-report-manager-names');
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: 'Database query failed' });
+  }
+});
+
 router.get('/debug-tables', async (req, res) => {
   try {
     const data = await Database.executeQuery('debug-tables');

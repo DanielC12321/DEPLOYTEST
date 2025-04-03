@@ -1,6 +1,9 @@
 import * as React from 'react';
 import ProductUsageChart from './ProductUsageChart.tsx';
 import ManagerInventory from './managerInventory.js';
+import SalesReport from "./SalesReport.tsx";
+import XReport from "./XReport.tsx";
+import ZReport from "./ZReport.tsx";
 
 interface ManagerInterfaceState {
     selectedReport: string;
@@ -15,23 +18,23 @@ class ManagerInterface extends React.Component<{}, ManagerInterfaceState> {
     }
 
     handleReportClick = (reportName: string) => {
-        this.setState({ selectedReport: reportName });
+        this.setState({selectedReport: reportName});
     };
 
     renderReport() {
-        const { selectedReport } = this.state;
+        const {selectedReport} = this.state;
         switch (selectedReport) {
             case 'productUsage':
                 // Make sure the ProductUsageChart component is imported correctly.
-                return <ProductUsageChart />;
+                return <ProductUsageChart/>;
             case 'salesReport':
-                return <div>Sales Report Content (To Be Implemented)</div>;
+                return <SalesReport/>;
             case 'xReport':
-                return <div>X Report Content (To Be Implemented)</div>;
+                return <XReport/>;
             case 'zReport':
-                return <div>Z Report Content (To Be Implemented)</div>;
+                return <ZReport/>;
             case 'inventory':
-                return <ManagerInventory />;
+                return <ManagerInventory/>;
             default:
                 return <div>Please select a report to view.</div>;
         }
@@ -39,9 +42,9 @@ class ManagerInterface extends React.Component<{}, ManagerInterfaceState> {
 
     render() {
         return (
-            <div style={{ padding: '20px' }}>
+            <div style={{padding: '20px'}}>
                 <h1>Manager Interface</h1>
-                <div style={{ marginBottom: '20px' }}>
+                <div style={{marginBottom: '20px'}}>
                     <button onClick={() => this.handleReportClick('productUsage')}>
                         Product Usage Chart
                     </button>
@@ -60,8 +63,8 @@ class ManagerInterface extends React.Component<{}, ManagerInterfaceState> {
                 </div>
                 <div>{this.renderReport()}</div>
             </div>
-        </div>
-    );
-};
+        );
+    };
+}
 
 export default ManagerInterface;
