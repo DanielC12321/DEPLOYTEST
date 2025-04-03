@@ -160,6 +160,9 @@ const ZReport: React.FC = () => {
                     <Link to="/manager/zreport">
                         <button>Z Report</button>
                     </Link>
+                    <Link to="/manager/inventory">
+                        <button>Inventory</button>
+                    </Link>
                 </div>
 
                 {/* Centered date pickers and Run button */}
