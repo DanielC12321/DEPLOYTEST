@@ -11,7 +11,6 @@ import ProductUsageChart from "./pages/ProductUsageChart.tsx";
 import SalesReport from "./pages/SalesReport.tsx";
 import XReport from "./pages/XReport.tsx";
 import ZReport from "./pages/ZReport.tsx";
-import {ZeroedProvider} from "./pages/ZeroedContext.tsx";
 
 function App() {
   return (
