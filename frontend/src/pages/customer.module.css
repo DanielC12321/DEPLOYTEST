@@ -221,3 +221,114 @@
       margin: 5px 0;
   }
 }
+
+/* Add these new styles to your existing CSS file */
+
+/* Title displayed when checkout is open */
+.checkoutTitle {
+  flex: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.checkoutTitle h2 {
+  margin: 0;
+  color: #333;
+  text-transform: capitalize;
+  font-size: 1.4rem;
+}
+
+/* Empty cart message */
+.emptyCart {
+  text-align: center;
+  color: #888;
+  padding: 20px 0;
+  font-style: italic;
+}
+
+.orderItem {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+  align-items: flex-start;
+}
+
+/* Improved styling for item details */
+.orderItemDetails {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  margin-right: 10px;
+}
+
+.orderItemName {
+  font-weight: 500;
+  margin-bottom: 4px;
+  color: #333;
+}
+
+.orderItemCustomizations {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.orderItemCustomizations small {
+  margin-bottom: 2px;
+}
+
+/* New container for price and remove button */
+.orderItemActions {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+/* Price styling */
+.orderItemPrice {
+  font-weight: 600;
+  margin-right: 12px;
+}
+
+/* Remove button styling */
+.removeItemButton {
+  background-color: #ee3942;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  font-size: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  padding: 0;
+  transition: background-color 0.2s, transform 0.2s;
+  line-height: 1;
+}
+
+.removeItemButton:hover {
+  background-color: #d6303a;
+  transform: scale(1.1);
+}
+
+.removeItemButton:active {
+  transform: scale(0.95);
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .orderItemActions {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+  
+  .orderItemPrice {
+    margin-right: 0;
+    margin-bottom: 5px;
+  }
+}

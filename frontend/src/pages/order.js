@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import ItemPanel from './CustomerComponents/ItemPanel';
+import CustomizationModal from './CustomerComponents/CustomizationModal'; // Import the new component
 import MiniCategoryPanel from './CustomerComponents/MiniCategoryPanel';
 import styles from './customer.module.css';
 
@@ -17,12 +18,38 @@ function Order() {
     
     // State to track if checkout panel is open
     const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
-    
+    const [isCustomizationOpen, setIsCustomizationOpen] = useState(false);
+    const [selectedItem, setSelectedItem] = useState(null);
+    const [cartItems, setCartItems] = useState([]);
     // Toggle checkout panel
     const toggleCheckout = () => {
         setIsCheckoutOpen(!isCheckoutOpen);
     };
+
+    const openCustomization = (item) => {
+        setSelectedItem(item);
+        setIsCustomizationOpen(true);
+    };
     
+    // Close customization modal
+    const closeCustomization = () => {
+        setIsCustomizationOpen(false);
+        setSelectedItem(null);
+    };
+    
+    // Add item to cart
+    const addToCart = (item) => {
+        setCartItems([...cartItems, item]);
+    };
+
+    const calculateCartTotal = () => {
+        return cartItems.reduce((total, item) => total + item.totalPrice, 0).toFixed(2);
+    };
+
+    const removeFromCart = (indexToRemove) => {
+        setCartItems(cartItems.filter((_, index) => index !== indexToRemove));
+    };
+
     return (
         <div className={`${styles.ShareTeabackground} ${isCheckoutOpen ? styles.withCheckoutOpen : ''}`}>
             <div className={styles.ShareTeaHeader}>
@@ -82,122 +109,117 @@ function Order() {
 
             <div className={styles.menuItems}>
                 <ItemPanel
-                    item={{
-                        name: 'Mango Green Tea',
-                        price: 4.99,
-                        description: 'Refreshing green tea with mango flavor.',
-                        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
-                    }}
-                    onClick={() => navigate('/fruit-teas/mango-green-tea')}
-                />
-                <ItemPanel
-                    item={{
-                        name: 'Mango Green Tea',
-                        price: 4.99,
-                        description: 'Refreshing green tea with mango flavor.',
-                        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
-                    }}
-                    onClick={() => navigate('/fruit-teas/mango-green-tea')}
-                />
+                        item={{
+                            name: 'Mango Green Tea',
+                            price: 4.99,
+                            description: 'Refreshing green tea with mango flavor.',
+                            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
+                        }}
+                        onClick={() => openCustomization({
+                            name: 'Mango Green Tea',
+                            price: 4.99,
+                            description: 'Refreshing green tea with mango flavor.',
+                            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
+                        })}
+                    />
                     <ItemPanel
-                    item={{
-                        name: 'Mango Green Tea',
-                        price: 4.99,
-                        description: 'Refreshing green tea with mango flavor.',
-                        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
-                    }}
-                    onClick={() => navigate('/fruit-teas/mango-green-tea')}
-                />
-                <ItemPanel
-                    item={{
-                        name: 'Mango Green Tea',
-                        price: 4.99,
-                        description: 'Refreshing green tea with mango flavor.',
-                        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
-                    }}
-                    onClick={() => navigate('/fruit-teas/mango-green-tea')}
-                />
-                <ItemPanel
-                    item={{
-                        name: 'Mango Green Tea',
-                        price: 4.99,
-                        description: 'Refreshing green tea with mango flavor.',
-                        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
-                    }}
-                    onClick={() => navigate('/fruit-teas/mango-green-tea')}
-                />
-                                <ItemPanel
-                    item={{
-                        name: 'Mango Green Tea',
-                        price: 4.99,
-                        description: 'Refreshing green tea with mango flavor.',
-                        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
-                    }}
-                    onClick={() => navigate('/fruit-teas/mango-green-tea')}
-                />     
-                                <ItemPanel
-                    item={{
-                        name: 'Mango Green Tea',
-                        price: 4.99,
-                        description: 'Refreshing green tea with mango flavor.',
-                        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
-                    }}
-                    onClick={() => navigate('/fruit-teas/mango-green-tea')}
-                />     
-                                <ItemPanel
-                    item={{
-                        name: 'Mango Green Tea',
-                        price: 4.99,
-                        description: 'Refreshing green tea with mango flavor.',
-                        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
-                    }}
-                    onClick={() => navigate('/fruit-teas/mango-green-tea')}
-                />     
-                                <ItemPanel
-                    item={{
-                        name: 'Mango Green Tea',
-                        price: 4.99,
-                        description: 'Refreshing green tea with mango flavor.',
-                        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
-                    }}
-                    onClick={() => navigate('/fruit-teas/mango-green-tea')}
-                />     
-                                <ItemPanel
-                    item={{
-                        name: 'Mango Green Tea',
-                        price: 4.99,
-                        description: 'Refreshing green tea with mango flavor.',
-                        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
-                    }}
-                    onClick={() => navigate('/fruit-teas/mango-green-tea')}
-                />
-                <ItemPanel
-                    item={{
-                        name: 'Mango Green Tea',
-                        price: 4.99,
-                        description: 'Refreshing green tea with mango flavor.',
-                        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
-                    }}
-                    onClick={() => navigate('/fruit-teas/mango-green-tea')}
-                />
-                <ItemPanel
-                    item={{
-                        name: 'Mango Green Tea',
-                        price: 4.99,
-                        description: 'Refreshing green tea with mango flavor.',
-                        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
-                    }}
-                    onClick={() => navigate('/fruit-teas/mango-green-tea')}
-                />
-                <ItemPanel
-                    item={{
-                        name: 'Mango Green Tea',
-                        price: 4.99,
-                        description: 'Refreshing green tea with mango flavor.',
-                        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
-                    }}
-                    onClick={() => navigate('/fruit-teas/mango-green-tea')}
-                />                                       
+                        item={{
+                            name: 'Classic Milk Tea',
+                            price: 4.49,
+                            description: 'Traditional milk tea with a rich, creamy flavor.',
+                            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
+                        }}
+                        onClick={() => openCustomization({
+                            name: 'Classic Milk Tea',
+                            price: 4.49,
+                            description: 'Traditional milk tea with a rich, creamy flavor.',
+                            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
+                        })}
+                    />
+                                        <ItemPanel
+                        item={{
+                            name: 'Classic Milk Tea',
+                            price: 4.49,
+                            description: 'Traditional milk tea with a rich, creamy flavor.',
+                            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
+                        }}
+                        onClick={() => openCustomization({
+                            name: 'Classic Milk Tea',
+                            price: 4.49,
+                            description: 'Traditional milk tea with a rich, creamy flavor.',
+                            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
+                        })}
+                    />
+                                        <ItemPanel
+                        item={{
+                            name: 'Classic Milk Tea',
+                            price: 4.49,
+                            description: 'Traditional milk tea with a rich, creamy flavor.',
+                            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
+                        }}
+                        onClick={() => openCustomization({
+                            name: 'Classic Milk Tea',
+                            price: 4.49,
+                            description: 'Traditional milk tea with a rich, creamy flavor.',
+                            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
+                        })}
+                    />
+                                        <ItemPanel
+                        item={{
+                            name: 'Classic Milk Tea',
+                            price: 4.49,
+                            description: 'Traditional milk tea with a rich, creamy flavor.',
+                            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
+                        }}
+                        onClick={() => openCustomization({
+                            name: 'Classic Milk Tea',
+                            price: 4.49,
+                            description: 'Traditional milk tea with a rich, creamy flavor.',
+                            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
+                        })}
+                    />
+                                        <ItemPanel
+                        item={{
+                            name: 'Classic Milk Tea',
+                            price: 4.49,
+                            description: 'Traditional milk tea with a rich, creamy flavor.',
+                            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
+                        }}
+                        onClick={() => openCustomization({
+                            name: 'Classic Milk Tea',
+                            price: 4.49,
+                            description: 'Traditional milk tea with a rich, creamy flavor.',
+                            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
+                        })}
+                    />
+                                        <ItemPanel
+                        item={{
+                            name: 'Classic Milk Tea',
+                            price: 4.49,
+                            description: 'Traditional milk tea with a rich, creamy flavor.',
+                            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
+                        }}
+                        onClick={() => openCustomization({
+                            name: 'Classic Milk Tea',
+                            price: 4.49,
+                            description: 'Traditional milk tea with a rich, creamy flavor.',
+                            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
+                        })}
+                    />
+                                        <ItemPanel
+                        item={{
+                            name: 'Classic Milk Tea',
+                            price: 4.49,
+                            description: 'Traditional milk tea with a rich, creamy flavor.',
+                            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
+                        }}
+                        onClick={() => openCustomization({
+                            name: 'Classic Milk Tea',
+                            price: 4.49,
+                            description: 'Traditional milk tea with a rich, creamy flavor.',
+                            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
+                        })}
+                    />                                       
             </div>
 
 
@@ -208,20 +230,46 @@ function Order() {
                     <button onClick={toggleCheckout} className={styles.closeButton}>×</button>
                 </div>
                 <div className={styles.orderItems}>
-                    {/* Here you would map through cart items */}
-                    <div className={styles.orderItem}>
-                        <span>Mango Green Tea</span>
-                        <span>$4.99</span>
-                    </div>
-                    {/* Add more sample items or real cart items */}
+                {cartItems.length === 0 ? (
+                        <div className={styles.emptyCart}>Your cart is empty</div>
+                    ) : (
+                        cartItems.map((item, index) => (
+                            <div key={index} className={styles.orderItem}>
+                                <div className={styles.orderItemDetails}>
+                                    <span className={styles.orderItemName}>{item.name}</span>
+                                    <div className={styles.orderItemCustomizations}>
+                                        <small>Size: {item.customizations.size}</small>
+                                        <small>Sugar: {item.customizations.sugar}</small>
+                                        <small>Pearls: {item.customizations.pearls}</small>
+                                    </div>
+                                </div>
+                                <div className={styles.orderItemActions}>
+                                    <span className={styles.orderItemPrice}>${item.totalPrice.toFixed(2)}</span>
+                                        <button 
+                                        className={styles.removeItemButton}
+                                        onClick={() => removeFromCart(index)}
+                                        aria-label="Remove item"
+                                        >
+                                        ×
+                                        </button>
+                                </div>
+                            </div>
+                        ))
+                    )}
                 </div>
                 <div className={styles.orderTotal}>
-                    <span>Total:</span>
-                    <span>$4.99</span>
+                <span>Total:</span>
+                <span>${calculateCartTotal()}</span>
                 </div>
                 <button className={styles.checkoutButton}>Proceed to Checkout</button>
             </div>
-
+                    {/* Customization*/}
+            <CustomizationModal
+                isOpen={isCustomizationOpen}
+                onClose={closeCustomization}
+                item={selectedItem}
+                onAddToCart={addToCart}
+            />
         </div>
     );
 }

@@ -1,81 +1,48 @@
-.mini-category-panel {
-  position: relative;
-  width: 23%; /* Instead of fixed width - takes roughly 1/4 of the container width with some gap */
-  height: 80%; /* Takes most of the container height */
-  min-width: 80px; /* Ensures minimum readable width on small screens */
-  max-width: 150px; /* Prevents becoming too large on big screens */
-  aspect-ratio: 2.5 / 1; /* Maintain consistent proportions */
-  border-radius: 20px;
-  overflow: hidden;
-  cursor: pointer;
-  background-size: cover;
-  background-position: center;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  margin: 0 1%; /* Percentage-based margins */
-}
-
-.mini-category-panel:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.mini-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.7));
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: background 0.3s ease;
-}
-
-.mini-category-panel:hover .mini-overlay {
-  background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.6));
-}
-
-.mini-panel-title {
-  color: white;
-  font-size: clamp(0.6rem, 1vw, 0.9rem); /* Responsive font size */
-  font-weight: 600;
-  text-align: center;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-  padding: 0 5px;
-  transition: transform 0.2s ease;
-}
-
-.mini-category-panel:hover .mini-panel-title {
-  transform: scale(1.05);
-}
-
-/* Media queries for better responsiveness */
-@media (max-width: 992px) {
-  .mini-category-panel {
-      width: 22%;
-      min-width: 70px;
-  }
-}
-
-@media (max-width: 768px) {
-  .mini-category-panel {
-      width: 45%; /* On smaller screens, make it 2 per row */
-      min-width: 100px;
-      margin: 1% 1%;
-      height: 40px;
-  }
-}
-
-@media (max-width: 480px) {
-  .mini-category-panel {
-      width: 90%; /* On very small screens, stack them */
-      min-width: auto;
-      margin: 5px 0;
-      height: 30px;
+.category-panel {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 0px;
+    overflow: hidden;
+    cursor: pointer;
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-size 0.5s ease;
   }
   
-  .mini-panel-title {
-      font-size: 0.8rem; /* Slightly larger font for better readability */
+  .category-panel:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    background-size: cover;
   }
-}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.6));
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background 0.3s ease;
+  }
+  
+  .category-panel:hover .overlay {
+    background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.5));
+  }
+
+  .panel-title {
+    color: white;
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-align: center;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    padding: 0 20px;
+    transition: transform 0.3s ease;
+  }
+  
+  .category-panel:hover .panel-title {
+    transform: scale(1.05);
+  }
