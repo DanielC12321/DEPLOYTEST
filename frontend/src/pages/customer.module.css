@@ -14,46 +14,210 @@
 .category-panel:nth-child(3) { grid-column: 3 / 4; }
 .category-panel:nth-child(4) { grid-column: 4 / 5; }
 
+/* Main page container */
 .ShareTeabackground {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+  display: flex;
+  flex-direction: column;
+  background-color: #faebd7;
+  box-sizing: border-box; /* Include padding in width calculation */
+  transition: padding-right 0.3s ease; /* Add transition for smooth shift */
+}
+
+/* When checkout is open, add padding to shift everything left */
+.withCheckoutOpen {
+  padding-right: 300px; /* This shifts everything to the left */
+}
+
+/* Header styling - updated to ensure it stays in view */
+.ShareTeaHeader {
   position: fixed;
   top: 0;
   left: 0;
-  height: 100vh;
-  width: 100vw;
-  z-index: -1; /* Places it behind other content */
-  background-size: cover;
-  background-position: center;
-}
-
-.menuContainer {
-  position: fixed;
-  top: 20vh; /* Start at 20% from top */
-  left: 0;
-  width: 100vw;
-  height: 80vh; /* Take up bottom 80% of screen */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1; /* Places it above the background */
-}
-.menuItems{
-  display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 4 equal columns */
-  gap: 10px; /* Space between items */
   width: 100%;
-  height: 100%;
-  overflow-y: auto; /* Allow vertical scrolling if needed */
-  padding: 20px; /* Add some padding for aesthetics */
+  height: 20vh;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  z-index: 100;
+  background-color: #f1f3f6;
+  box-sizing: border-box;
+  transition: width 0.3s ease, left 0.3s ease;
 }
 
-.menuItems > * {
-  aspect-ratio: 1/1; /* Makes each item a square */
-  width: 100%; /* Ensure full width within grid cell */
-  height: auto; /* Height will be determined by aspect ratio */
-  padding: 20px; /* Add some padding for aesthetics */
+/* Adjust header width when checkout is open */
+.withCheckoutOpen .ShareTeaHeader {
+  width: calc(100% - 300px);
+}
 
+/* Menu container - add top margin to prevent header overlap but REMOVE right padding */
+.menuContainer {
+  width: 100%;
+  flex: 1;
+  padding: 10px;
+  margin-top: 20vh; /* Match the header height */
+  box-sizing: border-box;
+  transition: padding 0.3s ease; /* Add transition for the padding */
+}
+
+/* REMOVE this rule to prevent double padding */
+/* .withCheckoutOpen .menuContainer {
+  padding-right: 300px;
+} */
+
+/* Menu grid */
+.menuItems {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* Fixed 4 columns */
+  gap: 15px;
+  width: 100%;
+  padding: 15px;
+  box-sizing: border-box;
+}
+
+/* Each menu item */
+.menuItems > * {
+  width: 100%;
+  height: 300px;
+  box-sizing: border-box;
+}
+
+.ShareTeaLogo {
+  height: 80%;
   display: flex;
   align-items: center;
+  margin-right: auto;
+  box-sizing: border-box;
+}
+
+.ShareTeaLogo img {
+  max-height: 100%;
+  width: auto;
+  object-fit: contain;
+}
+
+/* Checkout icon in header */
+.ShareTeaCheckout {
+  height: 50%;
+  
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.ShareTeaCheckout:hover {
+  transform: scale(1.1);
+}
+
+/* Order summary panel */
+.orderSummaryPanel {
+  position: fixed;
+  top: 0;
+  right: -300px; /* Start off-screen */
+  width: 300px;
+  height: 100vh;
+  background-color: white;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+  transition: right 0.3s ease;
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* When panel is open */
+.orderSummaryPanel.open {
+  right: 0;
+}
+
+/* Header of the order panel */
+.orderSummaryHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #888;
+}
+
+/* Order items container */
+.orderItems {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 20px;
+}
+
+.orderItem {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+/* Order totals */
+.orderTotal {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  margin: 15px 0;
+  padding-top: 10px;
+  border-top: 1px solid #ddd;
+}
+
+/* Checkout button */
+.checkoutButton {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  width: 100%;
+}
+
+.checkoutButton:hover {
+  background-color: #3e8e41;
+}
+
+/* Container for the mini category panels */
+.miniCategoriesContainer {
+  display: flex;
   justify-content: center;
-  box-sizing: border-box; /* Include padding in element dimensions */
+  align-items: center;
+  flex-wrap: wrap;
+  width: 60%; /* Take up 60% of the header width */
+  height: 80%; /* Take up 80% of the header height */
+  gap: 2%; /* Percentage-based gap */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .miniCategoriesContainer {
+      width: 100%;
+      height: auto;
+      padding: 10px 0;
+  }
+  
+  .ShareTeaHeader {
+      flex-direction: column;
+      height: auto;
+      padding: 10px;
+  }
+  
+  .ShareTeaLogo, .ShareTeaCheckout {
+      margin: 5px 0;
+  }
 }

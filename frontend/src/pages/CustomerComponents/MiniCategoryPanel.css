@@ -1,0 +1,69 @@
+/* Active state styling - consolidated and improved */
+.mini-category-panel.active {
+    /* Remove transform that was part of the bounce animation */
+    transform: none; 
+    box-shadow: 0 0 0 3px rgba(238, 57, 66, 0.8), 0 4px 8px rgba(0, 0, 0, 0.3);
+    position: relative;
+    z-index: 5;
+    /* Keep the glow effect */
+    filter: drop-shadow(0 0 6px rgba(238, 57, 66, 0.7));
+    animation: none;
+}
+  
+/* Improved glowing effect for active panel using ::before instead */
+.mini-category-panel.active::before {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    right: -3px;
+    bottom: -3px;
+    border-radius: 23px; 
+    background: transparent;
+    border: 2px solid rgba(238, 57, 66, 0.6);
+    box-shadow: 0 0 15px 2px rgba(238, 57, 66, 0.7);
+    z-index: -1;
+
+    animation: redPulse 1.5s infinite alternate;
+    pointer-events: none; 
+}
+  
+/* Darker overlay for active panel */
+.mini-category-panel.active .mini-overlay {
+    background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.5));
+}
+  
+/* Larger text for active panel */
+.mini-category-panel.active .mini-panel-title {
+    transform: scale(1.05);
+    font-weight: 700;
+    color: #ffffff;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+}
+  
+/* Red pulse animation specifically for the border glow */
+@keyframes redPulse {
+    0% {
+        box-shadow: 0 0 8px 2px rgba(238, 57, 66, 0.4);
+        border-color: rgba(238, 57, 66, 0.6);
+    }
+    100% {
+        box-shadow: 0 0 15px 4px rgba(238, 57, 66, 0.7);
+        border-color: rgba(238, 57, 66, 0.9);
+    }
+}
+  
+
+  
+/* Ensuring consistency across browsers */
+@-webkit-keyframes redPulse {
+    0% {
+        box-shadow: 0 0 8px 2px rgba(238, 57, 66, 0.4);
+        border-color: rgba(238, 57, 66, 0.6);
+    }
+    100% {
+        box-shadow: 0 0 15px 4px rgba(238, 57, 66, 0.7);
+        border-color: rgba(238, 57, 66, 0.9);
+    }
+}
+  
