@@ -202,6 +202,9 @@ const XReport: React.FC = () => {
                     <Link to="/manager/zreport">
                         <button>Z Report</button>
                     </Link>
+                    <Link to="/manager/inventory">
+                        <button>Inventory</button>
+                    </Link>
                 </div>
 
                 {/* Controls: Date Picker, Load Data, and Unzero button */}

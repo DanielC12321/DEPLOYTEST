@@ -56,6 +56,29 @@ class QueryManager {
             AND EXTRACT(HOUR FROM datetime)::int <= $2
             GROUP BY payment_method;
         `,
+        "z-report-sales-tax": `
+            SELECT COALESCE(SUM(CAST(total_cost AS numeric)), 0) AS sales,
+                   COALESCE(SUM(CAST(total_cost AS numeric) * tax_rate), 0) AS total_tax
+            FROM customer_order
+            WHERE CAST(datetime AS date) BETWEEN $1 AND $2;
+        `,
+        "z-report-payment-methods": `
+            SELECT payment_method,
+                   COALESCE(SUM(CAST(total_cost AS numeric)), 0) AS amount
+            FROM customer_order
+            WHERE CAST(datetime AS date) BETWEEN $1 AND $2
+            GROUP BY payment_method
+        `,
+        "z-report-adjustments": `
+            SELECT COALESCE(SUM(CAST(discount AS numeric)), 0) AS discounts,
+                   COALESCE(SUM(CAST("void" AS numeric)), 0) AS voids,
+                   COALESCE(SUM(CAST(service_charge AS numeric)), 0) AS service_charges
+            FROM customer_order
+            WHERE CAST(datetime AS date) BETWEEN $1 AND $2;
+        `,
+        "z-report-manager-names": `
+            SELECT name FROM manager;
+        `,
         "debug-tables": `
             SELECT
                 table_name,
