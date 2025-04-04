@@ -12,6 +12,7 @@ import SalesReport from "./pages/SalesReport.tsx";
 import XReport from "./pages/XReport.tsx";
 import ZReport from "./pages/ZReport.tsx";
 import ManagerInventory from "./pages/managerInventory";
+import { XReportProvider } from './context/XReportContext.tsx';
 
 function App() {
   return (
@@ -27,8 +28,22 @@ function App() {
           <Route path="/manager/inventory" element={<ManagerInventory />} />
           <Route path="/manager/productusagechart" element={<ProductUsageChart />} />
           <Route path="/manager/salesreport" element={<SalesReport />} />
-          <Route path="/manager/xreport" element={<XReport />} />
-          <Route path="/manager/zreport" element={<ZReport />} />
+          <Route
+              path="/manager/xreport"
+              element={
+                <XReportProvider>
+                  <XReport />
+                </XReportProvider>
+              }
+          />
+          <Route
+              path="/manager/zreport"
+              element={
+                <XReportProvider>
+                  <ZReport />
+                </XReportProvider>
+              }
+          />
         </Routes>
       </div>
     </Router>

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Bar } from 'react-chartjs-2';
+import { useXReport } from '../context/XReportContext.tsx';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -79,7 +80,7 @@ const XReport: React.FC = () => {
     });
     const [paymentMethods, setPaymentMethods] = useState<any[]>([]);
     // Flag to determine if the X report is zeroed out.
-    const [isZeroed, setIsZeroed] = useState<boolean>(false);
+    const { isZeroed, setIsZeroed } = useXReport();
 
     // Expose the setter so external modules can control the zero flag.
     useEffect(() => {

@@ -4,7 +4,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
 // Import the external setXReportZeroed function from the X Report module
-import { setXReportZeroed } from './XReport.tsx';
+import { useXReport } from '../context/XReportContext.tsx';
 
 interface ZReportSalesData {
     sales: number;
@@ -36,7 +36,7 @@ const ZReport: React.FC = () => {
     const [paymentMethods, setPaymentMethods] = useState<ZReportPaymentMethod[]>([]);
     const [adjustments, setAdjustments] = useState<ZReportAdjustments>({ discounts: 0, voids: 0, service_charges: 0 });
     const [employeeSignatures, setEmployeeSignatures] = useState<EmployeeSignature[]>([]);
-
+    const { setIsZeroed } = useXReport();
     const apiUrl = process.env.REACT_APP_API_URL;
 
     // Helper function to format a payment method name consistently.
@@ -114,7 +114,7 @@ const ZReport: React.FC = () => {
             }
 
             // Zero out the X Report.
-            setXReportZeroed(true);
+            setIsZeroed(true);
         } catch (error) {
             console.error('Error loading Z Report data:', error);
             alert('Error loading Z Report data');
