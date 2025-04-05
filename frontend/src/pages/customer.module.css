@@ -82,7 +82,6 @@
 /* Each menu item */
 .menuItems > * {
   width: 100%;
-  height: 300px;
   box-sizing: border-box;
 }
 

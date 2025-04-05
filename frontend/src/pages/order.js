@@ -15,7 +15,24 @@ function Order() {
     const { categoryType } = useParams();
     console.log(`Loading products for category: ${categoryType}`);
     const navigate = useNavigate();
+
+    const apiUrl = process.env.REACT_APP_API_URL;
+
+    const [menu, setMenu] = useState([]);
+    useEffect(() => {
+        const fetchMenu = async () => {
+          try {
+            const response = await fetch(`${apiUrl}/users/product_table`);
+            const data = await response.json();
+            setMenu(data);
+          } catch (error) {
+            console.error('Failed to fetch menu:', error);
+          }
+        };
     
+        fetchMenu();
+      }, []);
+
     // State to track if checkout panel is open
     const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
     const [isCustomizationOpen, setIsCustomizationOpen] = useState(false);
@@ -108,7 +125,7 @@ function Order() {
         <div className={styles.menuContainer}>
 
             <div className={styles.menuItems}>
-                <ItemPanel
+                {/*<ItemPanel
                         item={{
                             name: 'Mango Green Tea',
                             price: 4.99,
@@ -135,91 +152,24 @@ function Order() {
                             description: 'Traditional milk tea with a rich, creamy flavor.',
                             image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
                         })}
-                    />
-                                        <ItemPanel
+                    />}*/}
+                    {menu.filter(product => product.category === categoryType).map(product => (
+                        <ItemPanel
                         item={{
-                            name: 'Classic Milk Tea',
-                            price: 4.49,
+                            name: product.name,
+                            price: parseFloat(product.product_cost.replace(/[^\d.-]/g, '')),
                             description: 'Traditional milk tea with a rich, creamy flavor.',
                             image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
                         }}
                         onClick={() => openCustomization({
-                            name: 'Classic Milk Tea',
-                            price: 4.49,
+                            name: product.name,
+                            price: parseFloat(product.product_cost.replace(/[^\d.-]/g, '')),
                             description: 'Traditional milk tea with a rich, creamy flavor.',
                             image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
                         })}
-                    />
-                                        <ItemPanel
-                        item={{
-                            name: 'Classic Milk Tea',
-                            price: 4.49,
-                            description: 'Traditional milk tea with a rich, creamy flavor.',
-                            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
-                        }}
-                        onClick={() => openCustomization({
-                            name: 'Classic Milk Tea',
-                            price: 4.49,
-                            description: 'Traditional milk tea with a rich, creamy flavor.',
-                            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
-                        })}
-                    />
-                                        <ItemPanel
-                        item={{
-                            name: 'Classic Milk Tea',
-                            price: 4.49,
-                            description: 'Traditional milk tea with a rich, creamy flavor.',
-                            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
-                        }}
-                        onClick={() => openCustomization({
-                            name: 'Classic Milk Tea',
-                            price: 4.49,
-                            description: 'Traditional milk tea with a rich, creamy flavor.',
-                            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
-                        })}
-                    />
-                                        <ItemPanel
-                        item={{
-                            name: 'Classic Milk Tea',
-                            price: 4.49,
-                            description: 'Traditional milk tea with a rich, creamy flavor.',
-                            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
-                        }}
-                        onClick={() => openCustomization({
-                            name: 'Classic Milk Tea',
-                            price: 4.49,
-                            description: 'Traditional milk tea with a rich, creamy flavor.',
-                            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
-                        })}
-                    />
-                                        <ItemPanel
-                        item={{
-                            name: 'Classic Milk Tea',
-                            price: 4.49,
-                            description: 'Traditional milk tea with a rich, creamy flavor.',
-                            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
-                        }}
-                        onClick={() => openCustomization({
-                            name: 'Classic Milk Tea',
-                            price: 4.49,
-                            description: 'Traditional milk tea with a rich, creamy flavor.',
-                            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
-                        })}
-                    />
-                                        <ItemPanel
-                        item={{
-                            name: 'Classic Milk Tea',
-                            price: 4.49,
-                            description: 'Traditional milk tea with a rich, creamy flavor.',
-                            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
-                        }}
-                        onClick={() => openCustomization({
-                            name: 'Classic Milk Tea',
-                            price: 4.49,
-                            description: 'Traditional milk tea with a rich, creamy flavor.',
-                            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
-                        })}
-                    />                                       
+                        />
+                    ))}
+                                    
             </div>
 
 
@@ -261,7 +211,10 @@ function Order() {
                 <span>Total:</span>
                 <span>${calculateCartTotal()}</span>
                 </div>
-                <button className={styles.checkoutButton}>Proceed to Checkout</button>
+                <button className={styles.checkoutButton} 
+                onClick={() => navigate('/checkout', { state: { cartItems, total: calculateCartTotal() } })}>
+                    Proceed to Checkout
+                </button>
             </div>
                     {/* Customization*/}
             <CustomizationModal

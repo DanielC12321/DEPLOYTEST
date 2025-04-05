@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import React, { useState } from 'react';
 import './CustomizationModal.css';
 
@@ -9,6 +10,13 @@ function CustomizationModal({ isOpen, onClose, item, onAddToCart }) {
         pearls: 'Standard'
     });
     
+    useEffect(() => {
+        setCustomizations({
+          size: 'Medium',
+          sugar: 'Standard',
+          pearls: 'Standard'
+        });
+      }, [item]);
     // Skip rendering if not open or no item - AFTER the hooks are called
     if (!isOpen || !item) return null;
     

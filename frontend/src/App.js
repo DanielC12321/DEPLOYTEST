@@ -7,7 +7,8 @@ import Customer from './pages/customer';
 import Login from './pages/login';
 import ManagerInterface from './pages/ManagerInterface.tsx';
 import Order from './pages/order.js'; // Import the FruitTea component
-
+import Checkout from './pages/checkout.js';
+import OrderConfirmation from './pages/confirmation.js';
 function App() {
   return (
     <Router>
@@ -19,6 +20,8 @@ function App() {
           <Route path="/customer" element={<Customer />} />
           <Route path="/manager" element={<ManagerInterface />} />
           <Route path="/order/:categoryType" element={<Order />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path = "/order-confirmation" element={<OrderConfirmation />} />
         </Routes>
       </div>
     </Router>
