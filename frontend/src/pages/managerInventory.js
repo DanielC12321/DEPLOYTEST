@@ -10,16 +10,27 @@ function ManagerInventory() {
   const navigate = useNavigate();
 
   const toManager = () => {
-    navigate("/manager");
+    navigate("/ManagerInterface");
   }
+
+
+
+  /////////// Declare Variables ///////////////////
 
   const [products, setProducts] = useState([]);
   const [ingredients, setIngredients] = useState([]);
+  
   const [currproduct, setcurrProduct] = useState(null);
   const [curringredient, setcurrIngredient] = useState(null);
+
   const [openProduct, setopenProduct] = useState(false);
   const [openIngredient, setopenIngredient] = useState(false);
+  
+////////////////////////////////////////////////////////////////////
 
+
+
+////////////// Product/Ingredient Tables ////////////////////////////
 
   useEffect(() => {
     fetch("http://localhost:8001/users/product_table")
@@ -41,6 +52,7 @@ useEffect(() => {
   .catch((error) => console.error("Could not fetch data"));
 }, []);
 
+
 const productSelect = (id, name, price) => {
   setcurrProduct({id, name, price});
   setopenIngredient(false);
@@ -55,12 +67,7 @@ const ingredientSelect = (id, name, quant, cost) => {
   
 };
 
-
-
-
-
 const ProductTable = () => {
-
   return(
       <table class="tables" id="table1">
         <thead>
@@ -77,16 +84,13 @@ const ProductTable = () => {
               <td><button onClick={() => productSelect(entry.product_id, entry.name, entry.product_cost)} class="select">{entry.name}</button></td>
               <td>{entry.product_cost}</td>
             </tr>
-          ))
-          }
+          ))}
         </tbody>
       </table>
-
   );
 };
 
 const IngredientTable = () => {
-
   return(
       <table class="tables" id="table2">
         <thead>
@@ -109,9 +113,101 @@ const IngredientTable = () => {
           }
         </tbody>
       </table>
-
   );
 };
+
+/////////////////////////////////////////////////////////////
+
+
+//////////////////// Add Products/Ingredients ///////////////////////
+
+const addProduct = async (prodName, price) => {
+  try {
+    await fetch("http://localhost:8001/add_product", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        "name": prodName,
+        "cost": price,
+      }),
+    });
+  } catch (error) {
+    console.error("Could not update product table");
+  }
+};
+
+const [newprod, setnewprod] = useState("");
+const [newcost, setnewcost] = useState("");
+
+const handleAddProd = () => {
+  const usedName = products.some(products => products.name.toLowerCase() === newprod.toLowerCase())
+
+  if (newprod === "" || newcost === "" || usedName || isNaN(newcost)) {
+    alert("Invalid Input");
+    return
+  } else {
+    addProduct(newprod, newcost);
+  }
+}
+
+
+////////////////////////////////////////////////////////////////
+
+
+///////////////////// Update Products/Ingredients ////////////////////
+
+const [updatePrice, setupdatePrice] = useState("");
+
+const updateProduct = async (updatePrice, updateName) => {
+
+  if (updatePrice === "" || isNaN(updatePrice)) {
+    alert("Invalid Input");
+    return
+  } else {
+
+    try {
+      await fetch("http://localhost:8001/users/update_product", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          "name": updateName,
+          "cost": Number(updatePrice),
+        }),
+      });
+    } catch (error) {
+      console.error("Could not update product table");
+    }
+  } 
+}
+
+//////////////////////////////////////////////////////////////////
+
+
+
+/////////////////// Delete Products/Ingredients /////////////////////
+
+
+const delProduct = async (currproduct) => {
+
+  try {
+    await fetch("http://localhost:8001/users/delete_product", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        "name": currproduct.name,
+      }),
+    });
+  } catch (error) {
+    console.error("could not delete product");
+  }
+}
+
+///////////////////////////////////////////////////////////////////////
+
+
+
+
+////////////////// Main Body ///////////////////////////////////
 
   return (
         <div id="wrapper">
@@ -128,22 +224,18 @@ const IngredientTable = () => {
               <div id="itemName">Item: {currproduct.name}</div>
               <div class="attr">
                 <div>Item ID: {currproduct.id}</div><div>Item Price: {currproduct.price}</div>
-                </div>
-                <div class="attr"><button>Update Price</button><button>Remove Product</button></div>
-                <div>Enter New Item Price: <input></input></div>
+              </div>
+
+                <div class="attr"><button onClick={() => updateProduct(updatePrice, currproduct.name)}>Update Price</button><button onClick={() => delProduct(currproduct)}>Remove Product</button></div>
+                <div>Enter New Item Price: <input type="text" value={updatePrice} onChange={(e) => setupdatePrice(e.target.value)}></input></div>
               
               <h3>Add Product</h3>
                 <div>
-                <div>Enter New Item Price: <input></input></div>
-                <div>Enter New Item Price: <input></input></div>
-                <div>Enter New Item Price: <input></input></div>
-                <div><button>Add New Item</button></div>
-
-
+                <div>Enter New Item Name: <input type="text" value={newprod} onChange={(e) => setnewprod(e.target.value)}></input></div>
+                <div>Enter New Item Cost: <input type="number" value={newcost} onChange={(e) => setnewcost(e.target.value)}></input></div>
+                <div><button onClick={handleAddProd}>Add New Item</button></div>
 
                 </div>
-              
-
             </div>
           }
           {openIngredient && 
@@ -152,17 +244,23 @@ const IngredientTable = () => {
               <div id="itemName">Item: {curringredient.name}</div>
               <div class="attr">
                 <div>Item ID: {curringredient.id}</div><div>Item Quantity: {curringredient.quant}</div>Item Cost: <div>{curringredient.cost}</div>
+              </div>
+                <div class="attr"><button>Update Quantity</button><button>Update Cost</button><button>Remove Product</button></div>
+                  <div>Enter New Item Quantity: <input></input></div>
+                  <div>Enter New Item Cost: <input></input></div>
 
-                </div>
-
-
+                <h3>Add Ingredient</h3>
+                  <div>
+                  <div>Enter New Item Name: <input></input></div>
+                  <div>Enter New Item Quantity: <input></input></div>
+                  <div>Enter New Item Cost: <input></input></div>
+                  <div><button>Add New Item</button></div>
+              </div>
             </div>
           }
 
 
-
         </div>
-
 
 
         <div class="divs" id="div5">
