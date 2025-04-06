@@ -4,6 +4,15 @@ import { useEffect } from "react";
 import "./managerInventory.css";
 
 
+//TODOS
+// Fix Update Ingredient so you dont need to change both at once
+
+// LATER TODOS
+// Make the tables refresh every time it is altered
+// Fix the layout of the add/uodate/delete div
+// Fix the add prod/ingr API for image url
+// Maybe make "Are you sure pop ups"
+// 
 
 function ManagerInventory() {
   
@@ -32,15 +41,15 @@ function ManagerInventory() {
 
 ////////////// Product/Ingredient Tables ////////////////////////////
 
-  useEffect(() => {
-    fetch("http://localhost:8001/users/product_table")
-    .then(response => response.json())
-    .then(json => {
-      setProducts(json)
-      console.log(json)
-  })
-    .catch((error) => console.error("Could not fetch data"));
-  }, []);
+useEffect(() => {
+  fetch("http://localhost:8001/users/product_table")
+  .then(response => response.json())
+  .then(json => {
+    setProducts(json)
+    console.log(json)
+})
+  .catch((error) => console.error("Could not fetch data"));
+}, []);
 
 useEffect(() => {
   fetch("http://localhost:8001/users/ingredient_table")
@@ -151,6 +160,35 @@ const handleAddProd = () => {
 }
 
 
+const addIngredient = async (newIngr, price, quant) => {
+  const usedName = ingredients.some(ingredients => ingredients.name.toLowerCase() === newIngr.toLowerCase())
+
+  if (newIngr === "" || price === "" || quant === "" || usedName || isNaN(price)) {
+    alert("Invalid Input");
+    return
+
+  } else {
+    try {
+      await fetch("http://localhost:8001/add_ingredient", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          "name": newIngr,
+          "cost": price,
+          "quantity" : quant
+        }),
+      });
+    } catch (error) {
+      console.error("Could not update ingredient table");
+    }
+  }
+};
+
+const [newIngr, setnewingr] = useState("");
+const [newprice, setnewprice] = useState("");
+const [newquant, setnewquant] = useState("");
+
+
 ////////////////////////////////////////////////////////////////
 
 
@@ -180,6 +218,33 @@ const updateProduct = async (updatePrice, updateName) => {
   } 
 }
 
+
+const [updatequant, setupdatequant] = useState("");
+
+const updateIngredient = async (updatePrice, updateName, updatequant) => {
+
+  if (updatePrice === "" || isNaN(updatePrice) || updatequant === "" || isNaN(updatequant)) {
+    alert("Invalid Input");
+    return
+  } else {
+
+    try {
+      await fetch("http://localhost:8001/update_ingredient", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          "name": updateName,
+          "value": Number(updatePrice),
+          "field": updatequant
+          
+        }),
+      });
+    } catch (error) {
+      console.error("Could not update product table");
+    }
+  } 
+}
+
 //////////////////////////////////////////////////////////////////
 
 
@@ -195,6 +260,21 @@ const delProduct = async (currproduct) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         "name": currproduct.name,
+      }),
+    });
+  } catch (error) {
+    console.error("could not delete product");
+  }
+}
+
+const delIngredient = async (curringredient) => {
+
+  try {
+    await fetch("http://localhost:8001/delete_ingredient", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        "name": curringredient.name,
       }),
     });
   } catch (error) {
@@ -245,16 +325,16 @@ const delProduct = async (currproduct) => {
               <div class="attr">
                 <div>Item ID: {curringredient.id}</div><div>Item Quantity: {curringredient.quant}</div>Item Cost: <div>{curringredient.cost}</div>
               </div>
-                <div class="attr"><button>Update Quantity</button><button>Update Cost</button><button>Remove Product</button></div>
+                <div class="attr"><button>Update Quantity</button><button>Update Cost</button><button onClick={() => delIngredient(curringredient)}>Remove Ingredient</button></div>
                   <div>Enter New Item Quantity: <input></input></div>
                   <div>Enter New Item Cost: <input></input></div>
 
                 <h3>Add Ingredient</h3>
                   <div>
-                  <div>Enter New Item Name: <input></input></div>
-                  <div>Enter New Item Quantity: <input></input></div>
-                  <div>Enter New Item Cost: <input></input></div>
-                  <div><button>Add New Item</button></div>
+                  <div>Enter New Item Name: <input type="text" value={newIngr} onChange={(e) => setnewingr(e.target.value)}></input></div>
+                  <div>Enter New Item Quantity: <input type="number" value={newquant} onChange={(e) => setnewquant(e.target.value)}></input></div>
+                  <div>Enter New Item Cost: <input type="number" value={newprice} onChange={(e) => setnewprice(e.target.value)}></input></div>
+                  <div><button onClick={() => addIngredient(newIngr, newprice, newquant)}>Add New Item</button></div>
               </div>
             </div>
           }
