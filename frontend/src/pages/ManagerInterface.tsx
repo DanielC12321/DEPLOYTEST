@@ -1,5 +1,6 @@
 import * as React from 'react';
 import ProductUsageChart from './ProductUsageChart.tsx';
+import ManagerInventory from './managerInventory.js';
 
 interface ManagerInterfaceState {
     selectedReport: string;
@@ -29,6 +30,8 @@ class ManagerInterface extends React.Component<{}, ManagerInterfaceState> {
                 return <div>X Report Content (To Be Implemented)</div>;
             case 'zReport':
                 return <div>Z Report Content (To Be Implemented)</div>;
+            case 'inventory':
+                return <ManagerInventory />;
             default:
                 return <div>Please select a report to view.</div>;
         }
@@ -51,11 +54,13 @@ class ManagerInterface extends React.Component<{}, ManagerInterfaceState> {
                     <button onClick={() => this.handleReportClick('zReport')}>
                         Z Report
                     </button>
+                    <button onClick={() => this.handleReportClick('inventory')}>
+                        Inventory
+                    </button>
                 </div>
                 <div>{this.renderReport()}</div>
             </div>
-        );
-    }
+    );
+};
 }
-
 export default ManagerInterface;
