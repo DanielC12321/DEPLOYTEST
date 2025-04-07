@@ -19,7 +19,7 @@ function ManagerInventory() {
   const navigate = useNavigate();
 
   const toManager = () => {
-    navigate("/ManagerInterface");
+    navigate("/manager");
   }
 
 
