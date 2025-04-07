@@ -1,27 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import styles from './checkout.module.css'; // We'll create this next
+import styles from './checkout.module.css';
 
 function Checkout() {
   const location = useLocation();
   const navigate = useNavigate();
   const { cartItems, total } = location.state || { cartItems: [], total: '0.00' };
-  
-  // Try to retrieve from localStorage as backup
-  useEffect(() => {
-    if (!location.state) {
-      const storedCartItems = localStorage.getItem('cartItems');
-      const storedTotal = localStorage.getItem('cartTotal');
-      
-      if (storedCartItems) {
-        setOrderDetails({
-          ...orderDetails,
-          items: JSON.parse(storedCartItems),
-          total_cost: storedTotal || '0.00'
-        });
-      }
-    }
-  }, []);
 
   // State for all form fields needed for customer_order table
   const [orderDetails, setOrderDetails] = useState({
@@ -32,7 +16,7 @@ function Checkout() {
     service_charge: 0,
     discount: 0,
     tax_rate: 0.0825, // 8.25% tax rate for Texas
-    cashierid: 1, // Default value, adjust as needed
+    cashierid: 1,
   });
 
   // Calculate values
@@ -51,13 +35,10 @@ function Checkout() {
     });
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // In a real app, send the order to your backend here
     try {
-      // After successful submission, redirect to a confirmation page
       navigate('/order-confirmation', { 
         state: { 
           orderNumber: Math.floor(Math.random() * 10000), // Replace with actual order number
@@ -69,7 +50,6 @@ function Checkout() {
     }
   };
 
-  // Add the return statement with your JSX here
   return (
     <div className={styles.checkoutPage}>
       <div className={styles.checkoutHeader}>
