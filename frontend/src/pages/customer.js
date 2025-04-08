@@ -16,22 +16,22 @@ function Customer() {
             <CategoryPanel 
         title="Milk Teas" 
         background={milkTeaBackground}
-        onClick={() => navigate('/milk-teas')}
+        onClick={() => navigate('/order/milk-teas')}
       />
       <CategoryPanel 
         title="Pure Teas" 
         background={pureTeaBackground}
-        onClick={() => navigate('/pure-teas')}
+        onClick={() => navigate('/order/pure-teas')}
       />
       <CategoryPanel 
         title="Fruit Teas" 
         background={fruitTeaBackground}
-        onClick={() => navigate('/fruit-teas')}
+        onClick={() => navigate('/order/fruit-teas')}
       />
       <CategoryPanel 
         title="Specialty/Coffee" 
         background={specialtyBackground}
-        onClick={() => navigate('/specialty')}
+        onClick={() => navigate('/order/specialty')}
       />
       </div>
     );

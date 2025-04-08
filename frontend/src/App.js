@@ -7,11 +7,14 @@ import Customer from './pages/customer';
 import Login from './pages/login';
 import CashierCheckout from './pages/cashierCheckout';
 import ManagerInterface from './pages/ManagerInterface.tsx';
-import ProductUsageChart from "./pages/ProductUsageChart.tsx";
+import Order from './pages/order.js'; // Import the FruitTea component
+import Checkout from './pages/checkout.js';
+import OrderConfirmation from './pages/confirmation.js';import ProductUsageChart from "./pages/ProductUsageChart.tsx";
 import SalesReport from "./pages/SalesReport.tsx";
 import XReport from "./pages/XReport.tsx";
 import ZReport from "./pages/ZReport.tsx";
 import ManagerInventory from "./pages/managerInventory";
+import { XReportProvider } from './context/XReportContext.tsx';
 
 function App() {
   return (
@@ -24,11 +27,28 @@ function App() {
           <Route path="/customer" element={<Customer />} />
           <Route path="/cashierCheckout" element={<CashierCheckout />} />
           <Route path="/manager" element={<ManagerInterface />} />
+          <Route path="/order/:categoryType" element={<Order />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path = "/order-confirmation" element={<OrderConfirmation />} />
           <Route path="/manager/inventory" element={<ManagerInventory />} />
           <Route path="/manager/productusagechart" element={<ProductUsageChart />} />
           <Route path="/manager/salesreport" element={<SalesReport />} />
-          <Route path="/manager/xreport" element={<XReport />} />
-          <Route path="/manager/zreport" element={<ZReport />} />
+          <Route
+              path="/manager/xreport"
+              element={
+                <XReportProvider>
+                  <XReport />
+                </XReportProvider>
+              }
+          />
+          <Route
+              path="/manager/zreport"
+              element={
+                <XReportProvider>
+                  <ZReport />
+                </XReportProvider>
+              }
+          />
         </Routes>
       </div>
     </Router>
