@@ -16,15 +16,18 @@
 
 /* Main page container */
 .ShareTeabackground {
-  position: relative;
-  min-height: 100vh;
+  position: absolute; /* Change from relative to absolute */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  min-height: 100%;
   width: 100%;
-  overflow-x: hidden; /* Prevent horizontal scrolling */
   display: flex;
   flex-direction: column;
   background-color: #faebd7;
-  box-sizing: border-box; /* Include padding in width calculation */
-  transition: padding-right 0.3s ease; /* Add transition for smooth shift */
+  box-sizing: border-box;
+  transition: padding-right 0.3s ease;
 }
 
 /* When checkout is open, add padding to shift everything left */
@@ -59,9 +62,11 @@
   width: 100%;
   flex: 1;
   padding: 10px;
-  margin-top: 20vh; /* Match the header height */
+  margin-top: 20vh; /* Keep this to account for the header */
   box-sizing: border-box;
-  transition: padding 0.3s ease; /* Add transition for the padding */
+  transition: padding 0.3s ease;
+  overflow-y: auto; /* Add this to allow vertical scrolling */
+  padding-bottom: 40px; /* Add some bottom padding for better UX */
 }
 
 /* REMOVE this rule to prevent double padding */
@@ -72,11 +77,12 @@
 /* Menu grid */
 .menuItems {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* Fixed 4 columns */
+  grid-template-columns: repeat(4, 1fr); /* Keep this */
   gap: 15px;
   width: 100%;
   padding: 15px;
   box-sizing: border-box;
+  min-height: min-content; /* Add this to ensure it can grow */
 }
 
 /* Each menu item */
