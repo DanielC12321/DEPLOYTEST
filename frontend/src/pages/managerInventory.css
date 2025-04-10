@@ -105,7 +105,7 @@ tr:nth-of-type(odd) {
     background-color: #d9d9d9;
     justify-content: center;
     align-items: center;
-    padding-top: 100px;
+    padding-top: 25px;
 }
 
 #itemName {
@@ -118,4 +118,9 @@ tr:nth-of-type(odd) {
     justify-content: space-evenly;
     padding-bottom: 20px;
     
+}
+
+.productimg {
+    width: 150px;
+    height: 150px;
 }

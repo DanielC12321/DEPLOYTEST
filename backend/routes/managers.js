@@ -251,11 +251,11 @@ router.get('/employee_credentials', async (req, res) => {
 router.post('/add_product', async (req, res) => {
   // Logic to add a product
   try {
-      const {name, cost} = req.body;
-      if(!name || !cost){
-          return res.status(400).send('Name and cost are required!');
+    const {name, cost, category, imgurl} = req.body;
+      if(!name || !cost || !category || !imgurl){
+          return res.status(400).send('Name, cost, categroy, and image are required!');
       }
-      const result = await Database.executeQuery('add-product', [name, cost]);
+      const result = await Database.executeQuery('add-product', [name, cost, category, imgurl]);
       res.status(201).json(result);
   }
   catch(err){

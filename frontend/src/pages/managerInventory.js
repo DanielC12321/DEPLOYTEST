@@ -62,8 +62,8 @@ useEffect(() => {
 }, []);
 
 
-const productSelect = (id, name, price) => {
-  setcurrProduct({id, name, price});
+const productSelect = (id, name, price, category, imgurl) => {
+  setcurrProduct({id, name, price, category, imgurl});
   setopenIngredient(false);
   setopenProduct(true);
 
@@ -87,6 +87,7 @@ const ProductTable = () => {
         <thead>
           <tr>
             <th>ID</th>
+            <th>Category</th>
             <th>Product</th>
             <th>Price</th>
           </tr>
@@ -95,7 +96,8 @@ const ProductTable = () => {
           {products.map((entry, i) => (
             <tr class="rows" key={i}>
               <td>{entry.product_id}</td>
-              <td><button onClick={() => productSelect(entry.product_id, entry.name, entry.product_cost)} class="select">{entry.name}</button></td>
+              <td>{entry.category}</td>
+              <td><button onClick={() => productSelect(entry.product_id, entry.name, entry.product_cost, entry.category, entry.imgurl)} class="select">{entry.name}</button></td>
               <td>{entry.product_cost}</td>
             </tr>
           ))}
@@ -113,6 +115,7 @@ const IngredientTable = () => {
             <th>Product</th>
             <th>Quantity</th>
             <th>Cost</th>
+            <th>Allergens</th>
           </tr>
         </thead>
         <tbody>
@@ -122,6 +125,7 @@ const IngredientTable = () => {
               <td><button onClick={() => ingredientSelect(entry.ingredientid, entry.name, entry.quantity, entry.cost)} class="select">{entry.name}</button></td>
               <td>{entry.quantity}</td>
               <td>{entry.cost}</td>
+              <td>{entry.allergen}</td>
             </tr>
           ))
           }
@@ -135,7 +139,7 @@ const IngredientTable = () => {
 
 //////////////////// Add Products/Ingredients ///////////////////////
 
-const addProduct = async (prodName, price) => {
+const addProduct = async (prodName, price, category, imgurl) => {
   try {
     await fetch("http://localhost:8001/add_product", {
       method: "POST",
@@ -143,6 +147,8 @@ const addProduct = async (prodName, price) => {
       body: JSON.stringify({
         "name": prodName,
         "cost": price,
+        "category": category,
+        "imgurl": imgurl,
       }),
     });
   } catch (error) {
@@ -152,15 +158,18 @@ const addProduct = async (prodName, price) => {
 
 const [newprod, setnewprod] = useState("");
 const [newcost, setnewcost] = useState("");
+const [newcategory, setnewcategory] = useState("");
+const [newimg, setnewimg] = useState("");
+
 
 const handleAddProd = () => {
   const usedName = products.some(products => products.name.toLowerCase() === newprod.toLowerCase())
 
-  if (newprod === "" || newcost === "" || usedName || isNaN(newcost)) {
+  if (newprod === "" || newcost === "" || newcategory === "" || usedName || isNaN(newcost)) {
     alert("Invalid Input");
     return
   } else {
-    addProduct(newprod, newcost);
+    addProduct(newprod, newcost, newcategory, newimg);
   }
 }
 
@@ -229,9 +238,6 @@ const [updatefield, setupdatefield] = useState("");
 
 
 const updateIngredient = async (updateItem, updatefield, updateValue) => {
- alert(updateItem);
- alert(updatefield);
- alert(updateValue);
   const validName = ingredients.some(ingredients => ingredients.name.toLowerCase() === updateItem.toLowerCase())
   
   if (!validName || isNaN(updateValue)) {
@@ -313,6 +319,7 @@ const delIngredient = async (curringredient) => {
             <div class="update">
               <h2>Update Products</h2>
               <div id="itemName">Item: {currproduct.name} <button onClick={() => delProduct(currproduct)}>Remove Product</button></div>
+              <img class="productimg" src={currproduct.imgurl}></img>
               <div class="attr">
                 <div>Item ID: {currproduct.id}</div><div>Item Price: {currproduct.price}</div>
               </div>
@@ -355,8 +362,10 @@ const delIngredient = async (curringredient) => {
               <div>
                 <h3>Add Product</h3>
                   <div>
-                  <div>Enter New Item Name: <input type="text" value={newprod} onChange={(e) => setnewprod(e.target.value)}></input></div>
-                  <div>Enter New Item Cost: <input type="number" value={newcost} onChange={(e) => setnewcost(e.target.value)}></input></div>
+                  <div>Enter New Product Name: <input type="text" value={newprod} onChange={(e) => setnewprod(e.target.value)}></input></div>
+                  <div>Enter New Product Cost: <input type="number" value={newcost} onChange={(e) => setnewcost(e.target.value)}></input></div>
+                  <div>Enter New Product Category: <input type="text" value={newcategory} onChange={(e) => setnewcategory(e.target.value)}></input></div>
+                  <div>Enter Product Image URL: <input type="text" value={newimg} onChange={(e) => setnewimg(e.target.value)}></input></div>
                   <div><button onClick={handleAddProd}>Add New Item</button></div>
                 </div>
               </div>
