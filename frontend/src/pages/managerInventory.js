@@ -69,6 +69,11 @@ const productSelect = (id, name, price) => {
 
 };
 
+const noSelect = () => {
+  setopenProduct(false);
+  setopenIngredient(false);
+}
+
 const ingredientSelect = (id, name, quant, cost) => {
   setcurrIngredient({id, name, quant, cost});
   setopenProduct(false);
@@ -219,11 +224,17 @@ const updateProduct = async (updatePrice, updateName) => {
 }
 
 
-const [updatequant, setupdatequant] = useState("");
+const [updateValue, setupdateValue] = useState("");
+const [updatefield, setupdatefield] = useState("");
 
-const updateIngredient = async (updatePrice, updateName, updatequant) => {
 
-  if (updatePrice === "" || isNaN(updatePrice) || updatequant === "" || isNaN(updatequant)) {
+const updateIngredient = async (updateItem, updatefield, updateValue) => {
+ alert(updateItem);
+ alert(updatefield);
+ alert(updateValue);
+  const validName = ingredients.some(ingredients => ingredients.name.toLowerCase() === updateItem.toLowerCase())
+  
+  if (!validName || isNaN(updateValue)) {
     alert("Invalid Input");
     return
   } else {
@@ -233,9 +244,9 @@ const updateIngredient = async (updatePrice, updateName, updatequant) => {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          "name": updateName,
-          "value": Number(updatePrice),
-          "field": updatequant
+          "name": updateItem,
+          "value": updateValue,
+          "field": updatefield,
           
         }),
       });
@@ -300,41 +311,54 @@ const delIngredient = async (curringredient) => {
         <div class="divs" id="div4">
           {openProduct &&
             <div class="update">
-              <h2>Update Products Table</h2>
-              <div id="itemName">Item: {currproduct.name}</div>
+              <h2>Update Products</h2>
+              <div id="itemName">Item: {currproduct.name} <button onClick={() => delProduct(currproduct)}>Remove Product</button></div>
               <div class="attr">
                 <div>Item ID: {currproduct.id}</div><div>Item Price: {currproduct.price}</div>
               </div>
-
-                <div class="attr"><button onClick={() => updateProduct(updatePrice, currproduct.name)}>Update Price</button><button onClick={() => delProduct(currproduct)}>Remove Product</button></div>
-                <div>Enter New Item Price: <input type="text" value={updatePrice} onChange={(e) => setupdatePrice(e.target.value)}></input></div>
-              
-              <h3>Add Product</h3>
-                <div>
-                <div>Enter New Item Name: <input type="text" value={newprod} onChange={(e) => setnewprod(e.target.value)}></input></div>
-                <div>Enter New Item Cost: <input type="number" value={newcost} onChange={(e) => setnewcost(e.target.value)}></input></div>
-                <div><button onClick={handleAddProd}>Add New Item</button></div>
-
+                <div class="attr"></div>
+                <div>Enter New Item Price: <input type="text" value={updatePrice} onChange={(e) => setupdatePrice(e.target.value)}></input>
+                <button onClick={() => updateProduct(updatePrice, currproduct.name)}>Update Price</button>
                 </div>
+                <button class="backbtn" onClick={noSelect}>Back</button>
             </div>
           }
           {openIngredient && 
             <div class="update">
               <h2>Update Ingredients</h2>
-              <div id="itemName">Item: {curringredient.name}</div>
+              <div id="itemName">Item: {curringredient.name} <button onClick={() => delIngredient(curringredient)}>Remove Ingredient</button></div>
               <div class="attr">
                 <div>Item ID: {curringredient.id}</div><div>Item Quantity: {curringredient.quant}</div>Item Cost: <div>{curringredient.cost}</div>
               </div>
-                <div class="attr"><button>Update Quantity</button><button>Update Cost</button><button onClick={() => delIngredient(curringredient)}>Remove Ingredient</button></div>
-                  <div>Enter New Item Quantity: <input></input></div>
-                  <div>Enter New Item Cost: <input></input></div>
-
-                <h3>Add Ingredient</h3>
+              <div>
+                  <select value={updatefield} onChange={(e) => setupdatefield(e.target.value)}>
+                    <option value="">Update Field</option>
+                    <option value="cost">Cost</option>
+                    <option value="quantity">Quantity</option>
+                    <option value="allergen">Allergens</option>
+                  </select>
+                </div> 
+                  <div>New Value: <input value={updateValue} onChange={(e) => setupdateValue(e.target.value)}></input><button onClick={() => updateIngredient(curringredient.name, updatefield, updateValue)}>Change Value</button></div>
+                  <button class="backbtn" onClick={noSelect}>Back</button>
+            </div>
+          }
+          {!openIngredient && !openProduct &&
+            <div class="update">
+              <h3>Select a Product or Ingredient to Continue</h3>
+              <h3>Add Ingredient</h3>
+              <div>
+              <div>Enter New Item Name: <input type="text" value={newIngr} onChange={(e) => setnewingr(e.target.value)}></input></div>
+              <div>Enter New Item Quantity: <input type="number" value={newquant} onChange={(e) => setnewquant(e.target.value)}></input></div>
+              <div>Enter New Item Cost: <input type="number" value={newprice} onChange={(e) => setnewprice(e.target.value)}></input></div>
+              <div><button onClick={() => addIngredient(newIngr, newprice, newquant)}>Add New Item</button></div>
+              </div>
+              <div>
+                <h3>Add Product</h3>
                   <div>
-                  <div>Enter New Item Name: <input type="text" value={newIngr} onChange={(e) => setnewingr(e.target.value)}></input></div>
-                  <div>Enter New Item Quantity: <input type="number" value={newquant} onChange={(e) => setnewquant(e.target.value)}></input></div>
-                  <div>Enter New Item Cost: <input type="number" value={newprice} onChange={(e) => setnewprice(e.target.value)}></input></div>
-                  <div><button onClick={() => addIngredient(newIngr, newprice, newquant)}>Add New Item</button></div>
+                  <div>Enter New Item Name: <input type="text" value={newprod} onChange={(e) => setnewprod(e.target.value)}></input></div>
+                  <div>Enter New Item Cost: <input type="number" value={newcost} onChange={(e) => setnewcost(e.target.value)}></input></div>
+                  <div><button onClick={handleAddProd}>Add New Item</button></div>
+                </div>
               </div>
             </div>
           }
