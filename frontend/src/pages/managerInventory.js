@@ -4,14 +4,11 @@ import { useEffect } from "react";
 import "./managerInventory.css";
 
 
-//TODOS
-// Fix Update Ingredient so you dont need to change both at once
-
 // LATER TODOS
 // Make the tables refresh every time it is altered
 // Fix the layout of the add/uodate/delete div
-// Fix the add prod/ingr API for image url
 // Maybe make "Are you sure pop ups"
+// Order the tables by id
 // 
 
 function ManagerInventory() {
@@ -41,7 +38,7 @@ function ManagerInventory() {
 
 ////////////// Product/Ingredient Tables ////////////////////////////
 
-useEffect(() => {
+const getProducts = () => {
   fetch("http://localhost:8001/users/product_table")
   .then(response => response.json())
   .then(json => {
@@ -49,9 +46,9 @@ useEffect(() => {
     console.log(json)
 })
   .catch((error) => console.error("Could not fetch data"));
-}, []);
+};
 
-useEffect(() => {
+const getIngredients = () => {
   fetch("http://localhost:8001/users/ingredient_table")
   .then(response => response.json())
   .then(json => {
@@ -59,7 +56,17 @@ useEffect(() => {
     console.log(json)
 })
   .catch((error) => console.error("Could not fetch data"));
+};
+
+useEffect(() => {
+  getProducts();
+  getIngredients();
 }, []);
+
+const refreshTables = () => {
+  getProducts();
+  getIngredients();
+}
 
 
 const productSelect = (id, name, price, category, imgurl) => {
@@ -94,7 +101,7 @@ const ProductTable = () => {
         </thead>
         <tbody>
           {products.map((entry, i) => (
-            <tr class="rows" key={i}>
+            <tr key={i} class={currproduct?.id === entry.product_id && openProduct ? "selected" : "rows"}>
               <td>{entry.product_id}</td>
               <td>{entry.category}</td>
               <td><button onClick={() => productSelect(entry.product_id, entry.name, entry.product_cost, entry.category, entry.imgurl)} class="select">{entry.name}</button></td>
@@ -120,7 +127,7 @@ const IngredientTable = () => {
         </thead>
         <tbody>
           {ingredients.map((entry, i) => (
-            <tr class="rows" key={i}>
+            <tr class={curringredient?.id === entry.ingredientid && openIngredient ? "selected" : "rows"} key={i}>
               <td>{entry.ingredientid}</td>
               <td><button onClick={() => ingredientSelect(entry.ingredientid, entry.name, entry.quantity, entry.cost)} class="select">{entry.name}</button></td>
               <td>{entry.quantity}</td>
@@ -151,6 +158,7 @@ const addProduct = async (prodName, price, category, imgurl) => {
         "imgurl": imgurl,
       }),
     });
+    refreshTables();
   } catch (error) {
     console.error("Could not update product table");
   }
@@ -192,6 +200,7 @@ const addIngredient = async (newIngr, price, quant) => {
           "quantity" : quant
         }),
       });
+      refreshTables();
     } catch (error) {
       console.error("Could not update ingredient table");
     }
@@ -208,11 +217,14 @@ const [newquant, setnewquant] = useState("");
 
 ///////////////////// Update Products/Ingredients ////////////////////
 
-const [updatePrice, setupdatePrice] = useState("");
+const [pupdateValue, setpupdateValue] = useState("");
+const [pupdatefield, setpupdatefield] = useState("");
 
-const updateProduct = async (updatePrice, updateName) => {
 
-  if (updatePrice === "" || isNaN(updatePrice)) {
+const updateProduct = async (updateItem, pupdatefield, pupdateValue) => {
+  const validName = products.some(products => products.name.toLowerCase() === updateItem.toLowerCase())
+
+  if (!validName) {
     alert("Invalid Input");
     return
   } else {
@@ -222,10 +234,12 @@ const updateProduct = async (updatePrice, updateName) => {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          "name": updateName,
-          "cost": Number(updatePrice),
+          "name": updateItem,
+          "value": pupdateValue,
+          "field" : pupdatefield,
         }),
       });
+      refreshTables();
     } catch (error) {
       console.error("Could not update product table");
     }
@@ -240,7 +254,7 @@ const [updatefield, setupdatefield] = useState("");
 const updateIngredient = async (updateItem, updatefield, updateValue) => {
   const validName = ingredients.some(ingredients => ingredients.name.toLowerCase() === updateItem.toLowerCase())
   
-  if (!validName || isNaN(updateValue)) {
+  if (!validName) {
     alert("Invalid Input");
     return
   } else {
@@ -256,6 +270,7 @@ const updateIngredient = async (updateItem, updatefield, updateValue) => {
           
         }),
       });
+      refreshTables();
     } catch (error) {
       console.error("Could not update product table");
     }
@@ -279,6 +294,7 @@ const delProduct = async (currproduct) => {
         "name": currproduct.name,
       }),
     });
+    refreshTables();
   } catch (error) {
     console.error("could not delete product");
   }
@@ -294,6 +310,7 @@ const delIngredient = async (curringredient) => {
         "name": curringredient.name,
       }),
     });
+    refreshTables();
   } catch (error) {
     console.error("could not delete product");
   }
@@ -323,10 +340,15 @@ const delIngredient = async (curringredient) => {
               <div class="attr">
                 <div>Item ID: {currproduct.id}</div><div>Item Price: {currproduct.price}</div>
               </div>
-                <div class="attr"></div>
-                <div>Enter New Item Price: <input type="text" value={updatePrice} onChange={(e) => setupdatePrice(e.target.value)}></input>
-                <button onClick={() => updateProduct(updatePrice, currproduct.name)}>Update Price</button>
-                </div>
+              <div>
+                  <select value={pupdatefield} onChange={(e) => setpupdatefield(e.target.value)}>
+                    <option value="">Update Field</option>
+                    <option value="product_cost">Product Cost</option>
+                    <option value="category">Category</option>
+                    <option value="imgurl">Image URL</option>
+                  </select>
+                </div> 
+                  <div>New Value: <input value={pupdateValue} onChange={(e) => setpupdateValue(e.target.value)}></input><button onClick={() => updateProduct(currproduct.name, pupdatefield, pupdateValue)}>Change Value</button></div>
                 <button class="backbtn" onClick={noSelect}>Back</button>
             </div>
           }

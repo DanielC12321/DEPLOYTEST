@@ -96,8 +96,12 @@ tr:nth-of-type(odd) {
     border: none;
 }
 
+.selected {
+    filter: brightness(87%);
+}
+
 .rows:hover {
-    filter: brightness(90%);
+    filter: brightness(87%);
 }
 
 .update {

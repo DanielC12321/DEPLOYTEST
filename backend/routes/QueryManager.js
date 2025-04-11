@@ -93,8 +93,8 @@ class QueryManager {
         `,
         "debug-connection": "SELECT 1;",
         // Add more queries here
-        "product-table": "SELECT * FROM product;",
-        "ingredient-table": "SELECT * FROM ingredients;",
+        "product-table": "SELECT * FROM product ORDER BY product_id ASC;",
+        "ingredient-table": "SELECT * FROM ingredients ORDER BY ingredientid ASC;",
         "add-product": "INSERT INTO product (name, product_cost, category, imgurl) VALUES ($1, $2, $3, $4) RETURNING product_id;",
         "employee-names": "SELECT name FROM cashier ORDER BY name;",
         "get-employee-id": "SELECT cashierid FROM cashier WHERE name = $1;",
