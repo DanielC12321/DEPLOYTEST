@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
+  padding: clamp(10px, 5%, 20px); /* Responsive padding */
   background-color: #f9f9f9;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -10,48 +10,94 @@
   overflow: hidden;
   box-sizing: border-box;
   aspect-ratio: 1 / 1;
-  justify-content: space-between; /* This distributes space */
+  justify-content: flex-start;
 }
 
 .item-panel-image {
   width: 100%;
-  height: 80%; /* Use percentage instead of fixed px */
+  height: 45%; /* Use percentage instead of fixed height */
+  min-height: 80px; /* Set minimum height */
+  max-height: 180px; /* Set maximum height */
   object-fit: cover;
   border-radius: 6px;
-  margin-bottom: 12px;
+  margin-bottom: 4%; /* Percentage-based margin */
+  flex-shrink: 0;
 }
 
 .item-panel-information {
   width: 100%;
   overflow: hidden;
-  flex-grow: 1; /* Allow this to take remaining space */
   display: flex;
   flex-direction: column;
-  justify-content: flex-start; /* Align content to top of this section */
+  justify-content: flex-start;
+  height: 50%; /* Use percentage height */
 }
 
-.item-panel:hover {
-  transform: translateY(-1px);
-}
 .item-panel-title {
-  margin: 0 0 8px 0;
-  font-size: 1.1rem;
+  margin: 0 0 0.5em 0; /* Use em for margin */
+  font-size: clamp(0.9rem, 0.8vw + 0.6rem, 1.2rem); /* Responsive font size */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-weight: 600;
 }
 
 .item-panel-price {
-  margin: 0 0 6px 0;
+  margin: 0 0 0.4em 0;
+  color: #4CAF50;
+  font-weight: 500;
+  font-size: clamp(0.8rem, 0.7vw + 0.5rem, 1.1rem); /* Responsive font size */
 }
 
 .item-panel-description {
   margin: 0;
-  font-size: 0.9rem;
+  font-size: clamp(0.7rem, 0.6vw + 0.4rem, 0.9rem); /* Responsive font size */
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  -webkit-line-clamp: 2; /* Limit to 2 lines */
-  line-clamp: 2; /* Standard property for compatibility */
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
+  color: #666;
+}
+
+.item-panel:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Media query for very small screens */
+@media (max-width: 400px) {
+  .item-panel {
+    padding: 10px;
+  }
+  
+  .item-panel-title {
+    font-size: 0.9rem;
+  }
+  
+  .item-panel-price {
+    font-size: 0.8rem;
+  }
+  
+  .item-panel-description {
+    font-size: 0.7rem;
+    -webkit-line-clamp: 1; /* Show only 1 line on small screens */
+  }
+}
+
+/* Media query for large screens */
+@media (min-width: 1200px) {
+  .item-panel-title {
+    font-size: 1.2rem;
+  }
+  
+  .item-panel-price {
+    font-size: 1.1rem;
+  }
+  
+  .item-panel-description {
+    font-size: 0.9rem;
+    -webkit-line-clamp: 3; /* Show more text on larger screens */
+  }
 }

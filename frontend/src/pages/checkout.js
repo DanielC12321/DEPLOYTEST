@@ -5,8 +5,9 @@ import styles from './checkout.module.css';
 function Checkout() {
   const location = useLocation();
   const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { cartItems, total } = location.state || { cartItems: [], total: '0.00' };
-
+  const apiUrl = process.env.REACT_APP_API_URL;
   // State for all form fields needed for customer_order table
   const [orderDetails, setOrderDetails] = useState({
     customer_name: '',
@@ -16,7 +17,7 @@ function Checkout() {
     service_charge: 0,
     discount: 0,
     tax_rate: 0.0825, // 8.25% tax rate for Texas
-    cashierid: 1,
+    cashierid: 1, // TODO: Replace with actual cashier ID This is hardcoded
   });
 
   // Calculate values
@@ -37,17 +38,64 @@ function Checkout() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+    if (isSubmitting) return;
     try {
+      setIsSubmitting(true);
+      // Send order details to backend
+      let productList = []
+      cartItems.forEach(item => { productList.push(item.id.toString()) 
+        if(item.customizations.size === 'Small'){
+          productList.push("21")
+        }
+        else if(item.customizations.size === 'Medium'){
+          productList.push("22")
+        }
+        else if(item.customizations.size === 'Large'){
+          productList.push("23")
+        }
+        if(item.customizations.sugar === 'Standard'){
+          productList.push("56")
+        }
+        else if(item.customizations.sugar === 'Extra'){
+          productList.push("56")
+          productList.push("56")
+        }
+        if(item.customizations.pearls === 'Standard'){
+          productList.push("57")
+        }
+        else if(item.customizations.pearls === 'Extra'){
+          productList.push("57")
+          productList.push("57")
+        }
+
+      });
+      const orderData = {
+        productIDs: productList,
+        totalCost: finalTotal,
+        customerName: orderDetails.customer_name,
+        cashierId: orderDetails.cashierid,
+        paymentMethod: orderDetails.payment_method,
+        taxRate: orderDetails.tax_rate,
+      };
+      const response = await fetch(`${apiUrl}/users/register_order`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderData),
+      });
+      const data = await response.json();
+      console.log('Order response:', data);
       navigate('/order-confirmation', { 
         state: { 
-          orderNumber: Math.floor(Math.random() * 10000), // Replace with actual order number
+          orderNumber: data.orderId, // Replace with actual order number
           orderDetails 
         }
       });
     } catch (error) {
       console.error('Error submitting order:', error);
     }
+    setIsSubmitting(false);
   };
 
   return (
@@ -161,11 +209,12 @@ function Checkout() {
               Back to Order
             </button>
             <button 
-              type="submit" 
-              className={styles.placeOrderButton}
-            >
-              Place Order
-            </button>
+  type="submit" 
+  className={styles.placeOrderButton}
+  disabled={isSubmitting} 
+>
+  {isSubmitting ? 'Processing...' : 'Place Order'} 
+</button>
           </div>
         </form>
       </div>

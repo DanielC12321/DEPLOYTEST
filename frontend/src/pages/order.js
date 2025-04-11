@@ -157,15 +157,17 @@ function Order() {
                         <ItemPanel
                         item={{
                             name: product.name,
+                            id: product.product_id,
                             price: parseFloat(product.product_cost.replace(/[^\d.-]/g, '')),
                             description: 'Traditional milk tea with a rich, creamy flavor.',
-                            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
+                            image: product.imgurl
                         }}
                         onClick={() => openCustomization({
                             name: product.name,
+                            id: product.product_id,
                             price: parseFloat(product.product_cost.replace(/[^\d.-]/g, '')),
                             description: 'Traditional milk tea with a rich, creamy flavor.',
-                            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
+                            image: product.imgurl
                         })}
                         />
                     ))}
