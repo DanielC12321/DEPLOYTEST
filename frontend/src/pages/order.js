@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import ItemPanel from './CustomerComponents/ItemPanel';
-import CustomizationModal from './CustomerComponents/CustomizationModal'; // Import the new component
+import CustomizationModal from './CustomerComponents/CustomizationModal'; 
 import MiniCategoryPanel from './CustomerComponents/MiniCategoryPanel';
 import styles from './customer.module.css';
 
@@ -19,6 +19,19 @@ function Order() {
     const apiUrl = process.env.REACT_APP_API_URL;
 
     const [menu, setMenu] = useState([]);
+    // State to track if checkout panel is open
+    const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+    const [isCustomizationOpen, setIsCustomizationOpen] = useState(false);
+    const [selectedItem, setSelectedItem] = useState(null);
+    const [cartItems, setCartItems] = useState([]);
+    
+    // Chatbot states
+    const [isChatOpen, setIsChatOpen] = useState(false);
+    const [chatMessages, setChatMessages] = useState([
+        { sender: 'bot', text: 'Hi! How can I help you with your order today?' }
+    ]);
+    const [chatInput, setChatInput] = useState('');
+
     useEffect(() => {
         const fetchMenu = async () => {
           try {
@@ -31,13 +44,8 @@ function Order() {
         };
     
         fetchMenu();
-      }, []);
+      }, [apiUrl]);
 
-    // State to track if checkout panel is open
-    const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
-    const [isCustomizationOpen, setIsCustomizationOpen] = useState(false);
-    const [selectedItem, setSelectedItem] = useState(null);
-    const [cartItems, setCartItems] = useState([]);
     // Toggle checkout panel
     const toggleCheckout = () => {
         setIsCheckoutOpen(!isCheckoutOpen);
@@ -65,6 +73,168 @@ function Order() {
 
     const removeFromCart = (indexToRemove) => {
         setCartItems(cartItems.filter((_, index) => index !== indexToRemove));
+    };
+
+    // Chatbot functions
+    const toggleChat = () => {
+        setIsChatOpen(!isChatOpen);
+    };
+
+    const getSystemPrompt = () => {
+        return {
+        role: "system",
+        parts: [{
+            text: `You are a helpful assistant for Sharetea, a popular bubble tea chain.
+    
+    ABOUT SHARETEA:
+    - Sharetea specializes in a variety of tea-based beverages including milk teas, fruit teas, and specialty drinks
+    - Our signature items include Classic Milk Tea, Taro Milk Tea, and Mango Green Tea
+    - We offer customization options for sweetness levels, ice levels, and toppings
+    
+    MENU CATEGORIES:
+    1. Milk Teas: Classic milk tea with black tea base and non-dairy creamer
+    2. Fruit Teas: Refreshing teas mixed with real fruit flavors
+    3. Pure Teas: Traditional teas without additives
+    4. Specialty Drinks: Signature creations exclusive to Sharetea
+    
+    POPULAR TOPPINGS:
+    - Pearls/Boba: Chewy tapioca balls
+    - Grass Jelly: Herb-based jelly with a subtle sweet taste
+    - Pudding: Smooth, custard-like topping
+    - Aloe Vera: Refreshing cubes with a light sweetness
+    
+    CUSTOMIZATION OPTIONS:
+    - Pearls: Less, Standard, Extra
+    - Pearls: Less, Standard, Extra
+    - Size: Small(8 oz) Medium (16oz), Large (24oz)
+    
+    When assisting customers:
+    - Be friendly and helpful
+    - Recommend popular combinations
+    - Explain ingredients when asked
+    - Provide information about nutrition when requested
+    - Help with the ordering process
+    - Answer questions about store locations and hours
+    
+    Focus on providing accurate information about Sharetea products and services. If you don't know something specific about Sharetea, be honest and offer to help with what you do know.`
+        }]
+        };
+    };
+
+    const sendMessage = async () => {
+        if (!chatInput.trim()) return;
+    
+        // Add user message to chat
+        const userMessage = { sender: 'user', text: chatInput };
+        setChatMessages(prevMessages => [...prevMessages, userMessage]);
+        
+        // Clear input field
+        const messageSent = chatInput;
+        setChatInput('');
+    
+        try {
+            // Filter out temporary messages
+            let validMessages = chatMessages.filter(msg => 
+                msg.sender !== 'bot-typing' && msg.sender !== 'bot-temp');
+            
+            // Skip the initial greeting if it exists
+            if (validMessages.length > 0 && validMessages[0].sender === 'bot') {
+                validMessages = validMessages.slice(1);
+            }
+            
+            // Add the current user message
+            validMessages.push(userMessage);
+            
+            // Prepare the conversation history
+            const filteredHistory = [];
+            
+            // Add a first user message with context instructions
+            // This combines what would be a system prompt into the first user message
+            const systemInstructions = getSystemPrompt().parts[0].text;
+            filteredHistory.push({
+                role: 'user',
+                parts: [{ text: `Please remember the following context for our conversation: ${systemInstructions}\n\nNow, I'd like to learn about ShareTea.` }]
+            });
+            
+            // Then add the rest of the conversation
+            for (let i = 0; i < validMessages.length; i++) {
+                filteredHistory.push({
+                    role: validMessages[i].sender === 'user' ? 'user' : 'model',
+                    parts: [{ text: validMessages[i].text }]
+                });
+            }
+            
+            console.log("Sending to API:", JSON.stringify({
+                chat: messageSent,
+                history: filteredHistory
+            }, null, 2));
+            
+            // Fix the endpoint - remove the duplicate "stream"
+            const response = await fetch(`${apiUrl}/api/stream/stream`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    chat: messageSent,
+                    history: filteredHistory
+                }),
+            });
+    
+            // Rest of your existing code remains the same...
+            if (response.body) {
+                // Handle streaming response
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder('utf-8');
+                let botResponse = '';
+    
+                // Show typing indicator
+                setChatMessages(prevMessages => [...prevMessages, { sender: 'bot-typing', text: 'Typing...' }]);
+    
+                while (true) {
+                    const { value, done } = await reader.read();
+                    if (done) break;
+                    
+                    // Decode the chunk and append to the response
+                    const chunk = decoder.decode(value, { stream: true });
+                    botResponse += chunk;
+                    
+                    // Update the bot response in real-time
+                    setChatMessages(prevMessages => {
+                        // Remove typing indicator or temporary response
+                        const filteredMessages = prevMessages.filter(msg => 
+                            msg.sender !== 'bot-typing' && msg.sender !== 'bot-temp');
+                        
+                        // Add the current response
+                        return [...filteredMessages, { sender: 'bot-temp', text: botResponse }];
+                    });
+                }
+    
+                // Finalize the response
+                setChatMessages(prevMessages => {
+                    const filteredMessages = prevMessages.filter(msg => 
+                        msg.sender !== 'bot-typing' && msg.sender !== 'bot-temp');
+                    return [...filteredMessages, { sender: 'bot', text: botResponse }];
+                });
+            } else {
+                setChatMessages(prevMessages => [
+                    ...prevMessages.filter(msg => msg.sender !== 'bot-typing'),
+                    { sender: 'bot', text: 'Sorry, I couldn\'t process your request.' }
+                ]);
+            }
+        } catch (error) {
+            console.error('Error sending message:', error);
+            setChatMessages(prevMessages => [
+                ...prevMessages.filter(msg => msg.sender !== 'bot-typing'),
+                { sender: 'bot', text: 'Sorry, something went wrong. Please try again later.' }
+            ]);
+        }
+    };
+
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
     };
 
     return (
@@ -122,59 +292,31 @@ function Order() {
                 />
             </div>
 
-        <div className={styles.menuContainer}>
-
-            <div className={styles.menuItems}>
-                {/*<ItemPanel
-                        item={{
-                            name: 'Mango Green Tea',
-                            price: 4.99,
-                            description: 'Refreshing green tea with mango flavor.',
-                            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
-                        }}
-                        onClick={() => openCustomization({
-                            name: 'Mango Green Tea',
-                            price: 4.99,
-                            description: 'Refreshing green tea with mango flavor.',
-                            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
-                        })}
-                    />
-                    <ItemPanel
-                        item={{
-                            name: 'Classic Milk Tea',
-                            price: 4.49,
-                            description: 'Traditional milk tea with a rich, creamy flavor.',
-                            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
-                        }}
-                        onClick={() => openCustomization({
-                            name: 'Classic Milk Tea',
-                            price: 4.49,
-                            description: 'Traditional milk tea with a rich, creamy flavor.',
-                            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
-                        })}
-                    />}*/}
+            <div className={styles.menuContainer}>
+                <div className={styles.menuItems}>
                     {menu.filter(product => product.category === categoryType).map(product => (
                         <ItemPanel
+                        key={product.product_id}
                         item={{
                             name: product.name,
+                            id: product.product_id,
                             price: parseFloat(product.product_cost.replace(/[^\d.-]/g, '')),
                             description: 'Traditional milk tea with a rich, creamy flavor.',
-                            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
+                            image: product.imgurl
                         }}
                         onClick={() => openCustomization({
                             name: product.name,
+                            id: product.product_id,
                             price: parseFloat(product.product_cost.replace(/[^\d.-]/g, '')),
                             description: 'Traditional milk tea with a rich, creamy flavor.',
-                            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxFFKFKxj7Ap16FcdJcha3WMx28uPdiCY7UQ&s'
+                            image: product.imgurl
                         })}
                         />
                     ))}
-                                    
+                </div>
             </div>
 
-
-        </div>
-        <div className={`${styles.orderSummaryPanel} ${isCheckoutOpen ? styles.open : ''}`}>
+            <div className={`${styles.orderSummaryPanel} ${isCheckoutOpen ? styles.open : ''}`}>
                 <div className={styles.orderSummaryHeader}>
                     <h2>Order Summary</h2>
                     <button onClick={toggleCheckout} className={styles.closeButton}>×</button>
@@ -216,13 +358,63 @@ function Order() {
                     Proceed to Checkout
                 </button>
             </div>
-                    {/* Customization*/}
+
+            {/* Customization Modal */}
             <CustomizationModal
                 isOpen={isCustomizationOpen}
                 onClose={closeCustomization}
                 item={selectedItem}
                 onAddToCart={addToCart}
             />
+
+            {/* Chatbot UI */}
+            <div className={styles.chatbotToggle} onClick={toggleChat}>
+                <img 
+                    src="https://img.icons8.com/color/48/000000/chat--v1.png" 
+                    alt="Chat with us"
+                />
+            </div>
+            
+            {isChatOpen && (
+                <div className={styles.chatbotContainer}>
+                    <div className={styles.chatbotHeader}>
+                        <h3>ShareTea Assistant</h3>
+                        <button className={styles.closeChatButton} onClick={toggleChat}>×</button>
+                    </div>
+                    <div className={styles.chatbotMessages}>
+                        {chatMessages.map((message, index) => (
+                            <div 
+                                key={index} 
+                                className={`${styles.chatMessage} ${
+                                    message.sender === 'user' 
+                                        ? styles.userMessage 
+                                        : message.sender === 'bot-typing'
+                                            ? styles.botTyping
+                                            : styles.botMessage
+                                }`}
+                            >
+                                {message.text}
+                            </div>
+                        ))}
+                    </div>
+                    <div className={styles.chatbotInputContainer}>
+                        <input
+                            type="text"
+                            value={chatInput}
+                            onChange={(e) => setChatInput(e.target.value)}
+                            onKeyPress={handleKeyPress}
+                            placeholder="Type your message..."
+                            className={styles.chatbotInput}
+                        />
+                        <button 
+                            onClick={sendMessage}
+                            className={styles.chatbotSendButton}
+                        >
+                            Send
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
