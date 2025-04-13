@@ -143,6 +143,9 @@ const SalesReport: React.FC = () => {
                     <Link to="/manager/zreport">
                         <button>Z Report</button>
                     </Link>
+                    <Link to="/manager/inventory">
+                        <button>Inventory</button>
+                    </Link>
                 </div>
 
                 {/* Date Pickers */}

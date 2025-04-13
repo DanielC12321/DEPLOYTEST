@@ -1,0 +1,189 @@
+/* Overlay - covers the entire screen with a semi-transparent background */
+.customization-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Modal container */
+.customization-modal {
+    background-color: white;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Modal header */
+.customization-header {
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    background-color: white;
+    z-index: 2;
+}
+
+.customization-header h2 {
+    margin: 0;
+    font-size: 1.3rem;
+    color: #333;
+}
+
+.close-button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #777;
+}
+
+/* Modal content */
+.customization-content {
+    padding: 20px;
+    flex-grow: 1;
+}
+
+/* Item details section */
+.item-details {
+    display: flex;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.item-details img {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    object-fit: cover;
+    margin-right: 15px;
+}
+
+.item-info h3 {
+    margin: 0 0 8px 0;
+    font-size: 1.2rem;
+    color: #333;
+}
+
+.item-description {
+    margin: 0 0 8px 0;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.base-price {
+    font-weight: bold;
+    color: #ee3942;
+    margin: 0;
+}
+
+/* Customization sections */
+.customization-section {
+    margin-bottom: 20px;
+}
+
+.customization-section h4 {
+    margin: 0 0 10px 0;
+    font-size: 1rem;
+    color: #333;
+}
+
+.option-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.option-button {
+    padding: 8px 15px;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    flex: 1;
+    min-width: 80px;
+    text-align: center;
+}
+
+.option-button:hover {
+    background-color: #f5f5f5;
+}
+
+.option-button.selected {
+    background-color: #ee3942;
+    color: white;
+    border-color: #ee3942;
+}
+
+/* Modal footer */
+.customization-footer {
+    padding: 15px 20px;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    bottom: 0;
+    background-color: white;
+    z-index: 2;
+}
+
+.price-total {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.add-to-cart-btn {
+    padding: 10px 20px;
+    background-color: #ee3942;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.add-to-cart-btn:hover {
+    background-color: #d6303a;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+    .customization-modal {
+        width: 95%;
+        max-height: 95vh;
+    }
+    
+    .item-details {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .item-details img {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+    
+    .option-button {
+        flex-basis: calc(50% - 10px);
+    }
+}

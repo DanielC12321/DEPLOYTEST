@@ -37,12 +37,12 @@ router.get('/one_product', async (req, res) => {
 }
     */
 router.put('/update_product', async (req, res) => {
-  const {name, cost} = req.body;
-  if (!name || !cost) {
+  const {name, value, field} = req.body;
+  if (!name|| !value || !field) {
     return res.status(400).json({ error: 'Missing product name or cost' });
   }
   try{
-    const data = await Database.executeCustomQuery('UPDATE product SET product_cost = $1 WHERE LOWER(name) = LOWER($2)', [cost, name]);
+    const data = await Database.executeCustomQuery(`UPDATE product SET ${field} = $2 WHERE LOWER(name) = LOWER($1);`, [name, value]);
     res.json({message: "Update Successful"});
   }
   catch(err){
