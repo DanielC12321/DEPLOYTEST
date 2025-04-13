@@ -5,6 +5,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var loginDBRouter = require('./routes/loginDB');
+var gemmaChatbotRouter = require('./routes/gemmaChatbot');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
@@ -31,6 +32,7 @@ app.use('/', productUsageRouter);
 
 // Put custom endpoints here
 app.use('/api/loginDB', loginDBRouter);
+app.use("/api/stream", gemmaChatbotRouter);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
