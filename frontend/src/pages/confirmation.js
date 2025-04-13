@@ -29,7 +29,7 @@ function OrderConfirmation() {
           <div className={styles.formActions}>
             <button 
               className={styles.placeOrderButton}
-              onClick={() => navigate('/order/milk-teas')}
+              onClick={() => navigate('/customer')}
             >
               Return to Menu
             </button>

@@ -96,8 +96,12 @@ tr:nth-of-type(odd) {
     border: none;
 }
 
+.selected {
+    filter: brightness(87%);
+}
+
 .rows:hover {
-    filter: brightness(90%);
+    filter: brightness(87%);
 }
 
 .update {
@@ -105,7 +109,7 @@ tr:nth-of-type(odd) {
     background-color: #d9d9d9;
     justify-content: center;
     align-items: center;
-    padding-top: 50px;
+    padding-top: 25px;
 }
 
 #itemName {
@@ -119,3 +123,20 @@ tr:nth-of-type(odd) {
     padding-bottom: 20px;
     
 }
+
+.productimg {
+    width: 150px;
+    height: 150px;
+}
+
+.scroll-box {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+  }
+  
+  .full-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  

@@ -14,6 +14,7 @@ import SalesReport from "./pages/SalesReport.tsx";
 import XReport from "./pages/XReport.tsx";
 import ZReport from "./pages/ZReport.tsx";
 import ManagerInventory from "./pages/managerInventory";
+import ManagerEmployee from "./pages/managerEmployee";
 import { XReportProvider } from './context/XReportContext.tsx';
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
           <Route path = "/order-confirmation" element={<OrderConfirmation />} />
           <Route path="/manager/inventory" element={<ManagerInventory />} />
           <Route path="/manager/productusagechart" element={<ProductUsageChart />} />
+          <Route path="/manager/employees" element={<ManagerEmployee />} />
           <Route path="/manager/salesreport" element={<SalesReport />} />
           <Route
               path="/manager/xreport"

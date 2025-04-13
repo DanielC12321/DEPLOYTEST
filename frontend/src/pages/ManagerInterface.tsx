@@ -12,6 +12,7 @@ const ManagerInterface = () => {
                 <Link to="/manager/xreport"><button>X Report</button></Link>
                 <Link to="/manager/zreport"><button>Z Report</button></Link>
                 <Link to="/manager/inventory"><button>Inventory</button></Link>
+                <Link to="/manager/employees"><button>Employee Management</button></Link>
             </div>
         </div>
     );
