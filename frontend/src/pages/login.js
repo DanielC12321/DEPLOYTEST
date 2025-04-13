@@ -77,45 +77,47 @@ function Login() {
 
   return (
     <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
-      <div className="container">
-        <h1 className="title">ShareTea</h1>
-        <div className="login-box">
-          <h2 className="login-header">LOGIN</h2>
-          <form onSubmit={handleLogin}>
-            <div className="input-container">
-              <input
-                type="text"
-                placeholder="Username"
-                className="input-field"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
+      <div className="outer-container">
+        <div className="container">
+          <h1 className="title">ShareTea</h1>
+          <div className="login-box">
+            <h2 className="login-header">LOGIN</h2>
+            <form onSubmit={handleLogin}>
+              <div className="input-container">
+                <input
+                  type="text"
+                  placeholder="Username"
+                  className="input-field"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="input-container">
+                <input
+                  type="password"
+                  placeholder="Password"
+                  className="input-field"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </div>
+              <button type="submit" className="button">
+                Login
+              </button>
+              <button onClick={handleCustomer} className="button">
+                Continue as Customer
+              </button>
+            </form>
+            <div className="google-login">
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={handleGoogleFailure}
               />
             </div>
-            <div className="input-container">
-              <input
-                type="password"
-                placeholder="Password"
-                className="input-field"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-            <button type="submit" className="button">
-              Login
-            </button>
-            <button onClick={handleCustomer} className="button">
-              Continue as Customer
-            </button>
-          </form>
-          <div className="google-login">
-            <GoogleLogin
-              onSuccess={handleGoogleSuccess}
-              onError={handleGoogleFailure}
-            />
+            <p className="forgot-password">Forgot password?</p>
           </div>
-          <p className="forgot-password">Forgot password?</p>
         </div>
       </div>
     </GoogleOAuthProvider>
