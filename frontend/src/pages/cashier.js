@@ -13,6 +13,7 @@ function Cashier() {
   const [pearls, setPearls] = useState('standard');
   const [orderItems, setOrderItems] = useState([]);
 
+
   const [products, setProducts] = useState([]);
   useEffect(() => {
     fetch("http://localhost:8001/users/product_table")
