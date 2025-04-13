@@ -5,6 +5,8 @@ import { useEffect } from "react";
 import "./cashier.css";
 
 
+// Removing one Item removes all
+
 function Cashier() {
   const [Open, setOpen] = useState(false);
   const [currproduct, setcurrproduct] = useState("");
