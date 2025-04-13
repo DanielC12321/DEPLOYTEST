@@ -128,3 +128,15 @@ tr:nth-of-type(odd) {
     width: 150px;
     height: 150px;
 }
+
+.scroll-box {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+  }
+  
+  .full-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
