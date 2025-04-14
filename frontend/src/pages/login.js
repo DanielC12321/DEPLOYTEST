@@ -7,7 +7,7 @@ function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-
+  const apiUrl = process.env.REACT_APP_API_URL;
   const demoCredentials = {
     cashier: { username: "cashier", password: "cashier123" },
     manager: { username: "manager", password: "manager123" },
@@ -39,7 +39,7 @@ function Login() {
   
     try {
       // Send the token to the backend for verification
-      const response = await fetch("http://localhost:8001/api/loginDB/verify", {
+      const response = await fetch(`${apiUrl}/api/loginDB/verify`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -15,10 +15,13 @@ function Cashier() {
   const [pearls, setPearls] = useState('standard');
   const [orderItems, setOrderItems] = useState([]);
 
+  const APIURL = process.env.REACT_APP_API_URL; 
+  console.log(APIURL);
+
 
   const [products, setProducts] = useState([]);
   useEffect(() => {
-    fetch("http://localhost:8001/users/product_table")
+    fetch(`${APIURL}/users/product_table`)
     .then(response => response.json())
     .then(json => {
       setProducts(json)

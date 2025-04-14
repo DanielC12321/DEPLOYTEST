@@ -19,6 +19,9 @@ function CashierCheckout() {
   const [totalCost, settotalCost] = useState(0);
   const navigate = useNavigate();
 
+  const APIURL = process.env.REACT_APP_API_URL; 
+  console.log(APIURL);
+
   const backtoMenu = () => {
     navigate("/cashier");
   };
@@ -48,7 +51,7 @@ function CashierCheckout() {
 */
   const placeOrder = async () => {
       try {
-        await fetch("http://localhost:8001/users/register_order", {
+        await fetch(`${APIURL}/users/register_order`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

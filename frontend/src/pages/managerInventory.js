@@ -54,7 +54,7 @@ const getProducts = () => {
 };
 
 const getIngredients = () => {
-  fetch("http://localhost:8001/users/ingredient_table")
+  fetch(`${APIURL}/users/ingredient_table`)
   .then(response => response.json())
   .then(json => {
     setIngredients(json)
@@ -153,7 +153,7 @@ const IngredientTable = () => {
 
 const addProduct = async (prodName, price, category, imgurl) => {
   try {
-    await fetch("http://localhost:8001/add_product", {
+    await fetch(`${APIURL}/add_product`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -196,7 +196,7 @@ const addIngredient = async (newIngr, price, quant) => {
 
   } else {
     try {
-      await fetch("http://localhost:8001/add_ingredient", {
+      await fetch(`${APIURL}/add_ingredient`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -235,7 +235,7 @@ const updateProduct = async (updateItem, pupdatefield, pupdateValue) => {
   } else {
 
     try {
-      await fetch("http://localhost:8001/users/update_product", {
+      await fetch(`${APIURL}/users/update_product`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -265,7 +265,7 @@ const updateIngredient = async (updateItem, updatefield, updateValue) => {
   } else {
 
     try {
-      await fetch("http://localhost:8001/update_ingredient", {
+      await fetch(`${APIURL}/update_ingredient`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -292,7 +292,7 @@ const updateIngredient = async (updateItem, updatefield, updateValue) => {
 const delProduct = async (currproduct) => {
 
   try {
-    await fetch("http://localhost:8001/users/delete_product", {
+    await fetch(`${APIURL}/users/delete_product`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -308,7 +308,7 @@ const delProduct = async (currproduct) => {
 const delIngredient = async (curringredient) => {
 
   try {
-    await fetch("http://localhost:8001/delete_ingredient", {
+    await fetch(`${APIURL}/delete_ingredient`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
