@@ -31,6 +31,10 @@ function ManagerInventory() {
 
   const [openProduct, setopenProduct] = useState(false);
   const [openIngredient, setopenIngredient] = useState(false);
+
+  const [prodRUsure, setprodRUsure] = useState(false);
+  const [ingrRUsure, setingrRUsure] = useState(false);
+
   
 
   const APIURL = process.env.REACT_APP_API_URL; 
@@ -105,7 +109,8 @@ const ProductTable = () => {
           </tr>
         </thead>
         <tbody>
-          {products.map((entry, i) => (
+          {products.filter(product => product.category !== "utensils" && product.category !== "add-ons")
+            .map((entry, i) => (
             <tr key={i} class={currproduct?.id === entry.product_id && openProduct ? "selected" : "rows"}>
               <td>{entry.product_id}</td>
               <td>{entry.category}</td>
@@ -303,6 +308,8 @@ const delProduct = async (currproduct) => {
   } catch (error) {
     console.error("could not delete product");
   }
+  noSelect();
+  setprodRUsure(false);
 }
 
 const delIngredient = async (curringredient) => {
@@ -319,6 +326,9 @@ const delIngredient = async (curringredient) => {
   } catch (error) {
     console.error("could not delete product");
   }
+  noSelect();
+  setingrRUsure(false);
+
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -330,71 +340,118 @@ const delIngredient = async (curringredient) => {
 
   return (
         <div id="wrapper">
-        <div class="divs" id="div1"><button onClick={toManager} id="back">&lt;= Manager Home</button></div>
-        <div class="divs" id="div2"><h1 id="header">Inventory</h1></div>
+        <div class="divs" id="div1"><button onClick={toManager} id="back">Manager Home</button></div>
+        <div class="divs" id="idiv2"><h1 id="header">Inventory</h1></div>
         <div class="divs" id="div3">Div</div>
 
 
 
         <div class="divs" id="div4">
-          {openProduct &&
-            <div class="update">
+          {openProduct && !prodRUsure &&
+              <div class="update">
               <h2>Update Products</h2>
-              <div id="itemName">Item: {currproduct.name} <button onClick={() => delProduct(currproduct)}>Remove Product</button></div>
+              <div id="itemName">{currproduct.name} <button class="delprod" onClick={() => setprodRUsure(true)}>X</button></div>
               <img class="productimg" src={currproduct.imgurl}></img>
               <div class="attr">
-                <div>Item ID: {currproduct.id}</div><div>Item Price: {currproduct.price}</div>
+                <div>ID: {currproduct.id}</div><div>Category: {currproduct.category}</div><div>Price: {currproduct.price}</div>
               </div>
               <div>
-                  <select value={pupdatefield} onChange={(e) => setpupdatefield(e.target.value)}>
+                  <select class="dropdown" value={pupdatefield} onChange={(e) => setpupdatefield(e.target.value)}>
                     <option value="">Update Field</option>
                     <option value="product_cost">Product Cost</option>
                     <option value="category">Category</option>
                     <option value="imgurl">Image URL</option>
                   </select>
+                  <input class="inupdate" value={pupdateValue} onChange={(e) => setpupdateValue(e.target.value)}></input><button class="dropdown" onClick={() => updateProduct(currproduct.name, pupdatefield, pupdateValue)}>Change Value</button>
                 </div> 
-                  <div>New Value: <input value={pupdateValue} onChange={(e) => setpupdateValue(e.target.value)}></input><button onClick={() => updateProduct(currproduct.name, pupdatefield, pupdateValue)}>Change Value</button></div>
                 <button class="backbtn" onClick={noSelect}>Back</button>
             </div>
-          }
-          {openIngredient && 
+            }
+            {prodRUsure &&
+              <div class="RUsure">
+              <div>Are you sure you want to Delete this Product?</div>
+              <div><button onClick={() => delProduct(currproduct)}>Yes</button><button onClick={() => setprodRUsure(false)}>No</button></div>
+              </div>
+            }
+
+          {openIngredient && !ingrRUsure &&
             <div class="update">
               <h2>Update Ingredients</h2>
-              <div id="itemName">Item: {curringredient.name} <button onClick={() => delIngredient(curringredient)}>Remove Ingredient</button></div>
+              <div style={{height: "100px"}}></div>
+              <div id="itemName">{curringredient.name} <button class="delprod" onClick={() => setingrRUsure(true)}>X</button></div>
               <div class="attr">
-                <div>Item ID: {curringredient.id}</div><div>Item Quantity: {curringredient.quant}</div>Item Cost: <div>{curringredient.cost}</div>
+                <div>ID: {curringredient.id}</div><div>Item Quantity: {curringredient.quant}</div>Item Cost: <div>{curringredient.cost}</div>
               </div>
               <div>
-                  <select value={updatefield} onChange={(e) => setupdatefield(e.target.value)}>
+                  <select class="dropdown" value={updatefield} onChange={(e) => setupdatefield(e.target.value)}>
                     <option value="">Update Field</option>
                     <option value="cost">Cost</option>
                     <option value="quantity">Quantity</option>
                     <option value="allergen">Allergens</option>
                   </select>
+                  <input class="inupdate" value={updateValue} onChange={(e) => setupdateValue(e.target.value)}></input><button class="dropdown" onClick={() => updateIngredient(curringredient.name, updatefield, updateValue)}>Change Value</button>
                 </div> 
-                  <div>New Value: <input value={updateValue} onChange={(e) => setupdateValue(e.target.value)}></input><button onClick={() => updateIngredient(curringredient.name, updatefield, updateValue)}>Change Value</button></div>
                   <button class="backbtn" onClick={noSelect}>Back</button>
+            </div>
+          }
+          {ingrRUsure &&
+            <div class="RUsure">
+            <div>Are you sure you want to Delete this Ingredient?</div>
+            <div><button onClick={() => delIngredient(curringredient)}>Yes</button><button onClick={() => setingrRUsure(false)}>No</button></div>
             </div>
           }
           {!openIngredient && !openProduct &&
             <div class="update">
               <h3>Select a Product or Ingredient to Continue</h3>
-              <h3>Add Ingredient</h3>
-              <div>
-              <div>Enter New Item Name: <input type="text" value={newIngr} onChange={(e) => setnewingr(e.target.value)}></input></div>
-              <div>Enter New Item Quantity: <input type="number" value={newquant} onChange={(e) => setnewquant(e.target.value)}></input></div>
-              <div>Enter New Item Cost: <input type="number" value={newprice} onChange={(e) => setnewprice(e.target.value)}></input></div>
-              <div><button onClick={() => addIngredient(newIngr, newprice, newquant)}>Add New Item</button></div>
-              </div>
               <div>
                 <h3>Add Product</h3>
-                  <div>
-                  <div>Enter New Product Name: <input type="text" value={newprod} onChange={(e) => setnewprod(e.target.value)}></input></div>
-                  <div>Enter New Product Cost: <input type="number" value={newcost} onChange={(e) => setnewcost(e.target.value)}></input></div>
-                  <div>Enter New Product Category: <input type="text" value={newcategory} onChange={(e) => setnewcategory(e.target.value)}></input></div>
-                  <div>Enter Product Image URL: <input type="text" value={newimg} onChange={(e) => setnewimg(e.target.value)}></input></div>
-                  <div><button onClick={handleAddProd}>Add New Item</button></div>
+                  <div class="addprodingr">
+                    <table class="additemtable">
+                      <tbody>
+                        <tr>
+                          <td class="inputlabel">New Product Name: </td>
+                          <td><input class="inputadd" type="text" value={newprod} onChange={(e) => setnewprod(e.target.value)}></input></td>
+                        </tr>
+                        <tr>
+                          <td class="inputlabel">New Product Cost: </td>
+                          <td><input class="inputadd" type="number" value={newcost} onChange={(e) => setnewcost(e.target.value)}></input></td>
+                        </tr>
+                        <tr>
+                          <td class="inputlabel">New Product Category: </td>
+                          <td><input class="inputadd" type="text" value={newcategory} onChange={(e) => setnewcategory(e.target.value)}></input></td>
+                        </tr>
+                        <tr>
+                          <td class="inputlabel">New Product Image URL: </td>
+                          <td><input class="inputadd" type="text" value={newimg} onChange={(e) => setnewimg(e.target.value)}></input></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  {newprod !== "" && newcost !== "" && newcategory !== "" && newimg !== "" &&
+                    <div><button class="addbutton" onClick={handleAddProd}>Add</button></div>
+                  }
                 </div>
+              </div>
+              <h3 id="addingrtitle">Add Ingredient</h3>
+              <div class="addprodingr">
+              <table class="additemtable">
+                  <tbody>
+                    <tr>
+                      <td class="inputlabel">New Item Name: </td>
+                      <td><input class="inputadd" type="text" value={newIngr} onChange={(e) => setnewingr(e.target.value)}></input></td>
+                    </tr>
+                    <tr>
+                      <td class="inputlabel">New Item Quantity: </td>
+                      <td><input class="inputadd" type="number" value={newquant} onChange={(e) => setnewquant(e.target.value)}></input></td>
+                    </tr>
+                    <tr>
+                      <td class="inputlabel">New Item Cost: </td>
+                      <td><input class="inputadd" type="number" value={newprice} onChange={(e) => setnewprice(e.target.value)}></input></td>
+                    </tr>
+                  </tbody>
+                </table>
+                {newIngr !== "" && newquant !== "" && newprice !== "" &&
+                  <div><button class="addbutton" onClick={() => addIngredient(newIngr, newprice, newquant)}>Add</button></div>
+                }
               </div>
             </div>
           }

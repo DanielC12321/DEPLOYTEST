@@ -9,7 +9,7 @@ function CustomizationModal({ isOpen, onClose, item, onAddToCart }) {
         sugar: 'Standard',
         pearls: 'Standard'
     });
-    
+    const [showToast, setShowToast] = useState(false);
     useEffect(() => {
         setCustomizations({
           size: 'Medium',
@@ -51,10 +51,16 @@ function CustomizationModal({ isOpen, onClose, item, onAddToCart }) {
             totalPrice: parseFloat(calculateTotal())
         };
         onAddToCart(customizedItem);
-        onClose();
+        setShowToast(true);
+        
+        setTimeout(() => {
+            setShowToast(false);
+            onClose();
+        }, 800);
     };
     
     return (
+        <div className="customization-overlay" onClick={onClose}>
         <div className="customization-overlay" onClick={onClose}>
             <div className="customization-modal" onClick={e => e.stopPropagation()}>
                 <div className="customization-header">
@@ -157,6 +163,12 @@ function CustomizationModal({ isOpen, onClose, item, onAddToCart }) {
                     <button className="add-to-cart-btn" onClick={handleAddToCart}>Add to Cart</button>
                 </div>
             </div>
+        </div>
+        {showToast && (
+    <div className={`add-to-cart-toast ${showToast ? 'shake' : ''}`} aria-live="polite">
+        <span>✓</span> Added to cart!
+    </div>
+)}
         </div>
     );
 }

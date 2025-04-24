@@ -1,5 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import {
+    Box,
+    Button,
+    Flex,
+    Heading,
+    Select,
+    Table,
+    Thead,
+    Tbody,
+    Tr,
+    Th,
+    Td,
+    Text,
+    useColorModeValue,
+    Input,
+} from '@chakra-ui/react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Bar } from 'react-chartjs-2';
@@ -14,7 +30,6 @@ import {
 } from 'chart.js';
 import zoomPlugin from 'chartjs-plugin-zoom';
 
-// Register Chart.js components and the zoom plugin
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, zoomPlugin);
 
 interface UsageData {
@@ -33,11 +48,9 @@ const ProductUsageChart: React.FC = () => {
         datasets: [],
     });
 
-    // Fetch data from API and update the chart
     const loadData = async () => {
         const apiUrl = process.env.REACT_APP_API_URL;
 
-        // Format dates to yyyy-MM-dd
         const formatDate = (date: Date) => date.toISOString().split('T')[0];
         const start_date = formatDate(startDate);
         const end_date = formatDate(endDate);
@@ -46,7 +59,6 @@ const ProductUsageChart: React.FC = () => {
             const response = await fetch(`${apiUrl}/product-usage-chart?start_date=${start_date}&end_date=${end_date}`);
             const jsonData: UsageData[] = await response.json();
 
-            // Optionally sort data based on current sortOrder
             const sortedData = sortData(jsonData, sortOrder);
             setData(sortedData);
             updateChart(sortedData);
@@ -58,9 +70,8 @@ const ProductUsageChart: React.FC = () => {
 
     useEffect(() => {
         loadData();
-    }, []); // Run once on component mount
+    }, [startDate, endDate]);
 
-    // Update chart dataset based on new data
     const updateChart = (usageData: UsageData[]) => {
         const labels = usageData.map(item => item.ingredient_name);
         const values = usageData.map(item => item.total_used);
@@ -78,7 +89,6 @@ const ProductUsageChart: React.FC = () => {
         });
     };
 
-    // Sort the data based on the selected order
     const sortData = (usageData: UsageData[], order: 'asc' | 'desc') => {
         return [...usageData].sort((a, b) =>
             order === 'asc' ? a.total_used - b.total_used : b.total_used - a.total_used
@@ -94,144 +104,133 @@ const ProductUsageChart: React.FC = () => {
     };
 
     return (
-        <div>
-            {/* Static Navbar */}
-            <header
-                style={{
-                    position: 'fixed',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    backgroundColor: '#fff',
-                    zIndex: 1000,
-                    padding: '10px',
-                    borderBottom: '1px solid #ccc',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                }}
+        <Box p={4}>
+            {/* Navbar */}
+            <Flex
+                direction="column"
+                position="fixed"
+                top={0}
+                left={0}
+                right={0}
+                bg="white"
+                zIndex={1000}
+                p={4}
+                borderBottom="1px"
+                borderColor="gray.200"
             >
-                {/* Button Container */}
-                <div style={{display: 'flex', gap: '10px', justifyContent: 'center'}}>
+                <Flex gap={3} justify="center" flexWrap="wrap">
                     <Link to="/manager">
-                        <button>Back to Manager</button>
+                        <Button size="sm" colorScheme="blue" variant="solid">Back to Manager</Button>
                     </Link>
                     <Link to="/manager/productusagechart">
-                        <button>Product Usage Chart</button>
+                        <Button size="sm" colorScheme="teal" variant="solid">Product Usage Chart</Button>
                     </Link>
                     <Link to="/manager/salesreport">
-                        <button>Sales Report</button>
+                        <Button size="sm" colorScheme="teal" variant="outline">Sales Report</Button>
                     </Link>
                     <Link to="/manager/xreport">
-                        <button>X Report</button>
+                        <Button size="sm" colorScheme="teal" variant="outline">X Report</Button>
                     </Link>
                     <Link to="/manager/zreport">
-                        <button>Z Report</button>
+                        <Button size="sm" colorScheme="teal" variant="outline">Z Report</Button>
                     </Link>
                     <Link to="/manager/inventory">
-                        <button>Inventory</button>
+                        <Button size="sm" colorScheme="teal" variant="outline">Inventory</Button>
                     </Link>
-                </div>
+                </Flex>
 
                 {/* Date Pickers */}
-                <div style={{display: 'flex', alignItems: 'center', gap: '10px', marginTop: '10px'}}>
-                    <div>
-                        <label>Start Date: </label>
+                <Flex gap={4} justify="center" align="center" mt={4} flexWrap="wrap">
+                    <Box>
+                        <Text fontSize="sm">Start Date</Text>
                         <DatePicker
                             selected={startDate}
                             onChange={(date: Date) => setStartDate(date!)}
                             dateFormat="yyyy-MM-dd"
                             maxDate={endDate}
+                            customInput={<Input size="sm" variant="outline" />}
                         />
-                    </div>
-                    <div>
-                        <label>End Date: </label>
+                    </Box>
+                    <Box>
+                        <Text fontSize="sm">End Date</Text>
                         <DatePicker
                             selected={endDate}
                             onChange={(date: Date) => setEndDate(date!)}
                             dateFormat="yyyy-MM-dd"
                             minDate={startDate}
+                            customInput={<Input size="sm" variant="outline" />}
                         />
-                    </div>
-                    <button onClick={loadData}>Load Data</button>
-                </div>
-            </header>
+                    </Box>
+                    <Box>
+                        <Text fontSize="sm">Sort By</Text>
+                        <Select size="sm" variant="outline" value={sortOrder} onChange={handleSortChange}>
+                        <option value="asc">Low to High</option>
+                        <option value="desc">High to Low</option>
+                        </Select>
+                    </Box>
+                </Flex>
+            </Flex>
 
-            {/* Page Title */}
-            <div style={{marginTop: '100px', textAlign: 'center'}}>
-                <h1>Product Usage Chart</h1>
-            </div>
+            {/* Content */}
+            <Box mt="160px" textAlign="center">
+                <Heading size="lg">Product Usage Chart</Heading>
+            </Box>
 
-            {/* Main Content - with top margin to avoid overlap */}
-            <div style={{marginTop: '20px', padding: '10px'}}>
-                <div style={{display: 'flex', gap: '20px'}}>
-                    {/* Data Table */}
-                    <div style={{flex: 1, maxHeight: '400px', overflowY: 'auto', border: '1px solid #ccc'}}>
-                        <table style={{width: '100%', borderCollapse: 'collapse'}} border={1}>
-                            <thead style={{position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 10}}>
-                            <tr>
-                                <th>Ingredient Name</th>
-                                <th>Total Used</th>
-                            </tr>
-                            </thead>
-                            <tbody>
+            <Flex direction={['column', 'row']} gap={6} mt={6}>
+                {/* Table */}
+                <Box flex={1} overflowY="auto" maxH="400px" borderWidth={1} borderRadius="md" p={2}>
+                    <Table size="sm" variant="simple">
+                        <Thead position="sticky" top={0} bg={useColorModeValue('gray.100', 'gray.700')} zIndex={1}>
+                            <Tr>
+                                <Th>Ingredient Name</Th>
+                                <Th>Total Used</Th>
+                            </Tr>
+                        </Thead>
+                        <Tbody>
                             {data.map((row, index) => (
-                                <tr key={index}>
-                                    <td>{row.ingredient_name}</td>
-                                    <td>{row.total_used}</td>
-                                </tr>
+                                <Tr key={index}>
+                                    <Td>{row.ingredient_name}</Td>
+                                    <Td>{row.total_used}</Td>
+                                </Tr>
                             ))}
-                            </tbody>
-                        </table>
-                    </div>
+                        </Tbody>
+                    </Table>
+                </Box>
 
-                    {/* Bar Chart */}
-                    <div style={{flex: 1, height: '500px'}}>
-                        <Bar
-                            data={chartData}
-                            options={{
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                plugins: {
-                                    legend: {display: false},
-                                    tooltip: {enabled: true},
+                {/* Bar Chart */}
+                <Box flex={1} height="500px">
+                    <Bar
+                        data={chartData}
+                        options={{
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: { enabled: true },
+                                zoom: {
+                                    pan: { enabled: true, mode: 'x' },
                                     zoom: {
-                                        pan: {
-                                            enabled: true,
-                                            mode: 'x',
-                                        },
-                                        zoom: {
-                                            wheel: {enabled: true},
-                                            pinch: {enabled: true},
-                                            mode: 'x',
-                                        },
+                                        wheel: { enabled: true },
+                                        pinch: { enabled: true },
+                                        mode: 'x',
                                     },
                                 },
-                                scales: {
-                                    y: {beginAtZero: true},
-                                    x: {
-                                        ticks: {
-                                            autoSkip: false,
-                                            maxRotation: 45,
-                                            minRotation: 45,
-                                        },
+                            },
+                            scales: {
+                                y: { beginAtZero: true },
+                                x: {
+                                    ticks: {
+                                        autoSkip: false,
+                                        maxRotation: 45,
+                                        minRotation: 45,
                                     },
                                 },
-                            }}
-                        />
-                    </div>
-                </div>
-
-                {/* Sort Panel */}
-                <div style={{marginTop: '20px'}}>
-                    <label>Sort By: </label>
-                    <select value={sortOrder} onChange={handleSortChange}>
-                        <option value="asc">Sort: Low to High</option>
-                        <option value="desc">Sort: High to Low</option>
-                    </select>
-                </div>
-            </div>
-        </div>
+                            },
+                        }}
+                    />
+                </Box>
+            </Flex>
+        </Box>
     );
 };
 

@@ -46,3 +46,11 @@
   .category-panel:hover .panel-title {
     transform: scale(1.05);
   }
+
+  .category-panel:focus
+  {
+    outline: 3px solid #4CAF50; 
+    outline-offset: -3px; 
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.3); 
+    transform: translateY(-1px); 
+  }

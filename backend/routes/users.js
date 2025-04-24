@@ -81,6 +81,21 @@ router.get('/ingredient_table', async (req, res) => {
 
 );
 
+//http://localhost:8001/users/nutritional-facts?productID=123
+router.get('/nutritional-facts', async (req, res) => {
+  const { productID } = req.query;  
+  if (!productID) {
+    return res.status(400).json({ error: 'Missing product id' });
+  }
+  try {
+    const data = await Database.executeQuery('nutritional-facts', [productID]);
+    res.json(data); // Return the actual data instead of just a message
+  } catch (err) {
+    console.error('Error getting nutritional facts:', err);
+    res.status(500).json({ error: 'Unable to get nutritional facts' });
+  }
+});
+
 
 
 

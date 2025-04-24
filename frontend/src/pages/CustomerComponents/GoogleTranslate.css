@@ -1,0 +1,44 @@
+.translate-container {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 999;
+    background-color: white;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.goog-te-gadget {
+font-family: Arial, sans-serif;
+font-size: 14px;
+}
+
+.goog-te-gadget-simple {
+background-color: #fff;
+border: 1px solid #ddd;
+border-radius: 4px;
+padding: 8px;
+}
+
+.goog-te-banner-frame {
+display: none;
+}
+
+body {
+top: 0 !important;
+}
+
+@media (max-width: 768px) {
+.translate-container {
+    padding: 8px;
+}
+
+.goog-te-gadget {
+    font-size: 12px;
+}
+
+.goog-te-gadget-simple {
+    padding: 6px;
+}
+}

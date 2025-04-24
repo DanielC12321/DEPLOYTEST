@@ -64,11 +64,26 @@
   transition: padding 0.3s ease; /* Add transition for the padding */
 }
 
-/* REMOVE this rule to prevent double padding */
-/* .withCheckoutOpen .menuContainer {
-  padding-right: 300px;
-} */
+.withCheckoutOpen .menuItems {
+  grid-template-columns: repeat(3, 1fr); /* Reduce to 3 columns instead of 4 */
+}
 
+/* For smaller screens, further reduce columns */
+@media (max-width: 960px) {
+  .withCheckoutOpen .menuItems {
+    grid-template-columns: repeat(2, 1fr); /* Just 2 columns on smaller screens */
+  }
+}
+
+.withCheckoutOpen .item-panel {
+  height: auto; /* Allow natural height */
+  min-height: 320px; /* Ensure minimum height */
+}
+
+/* Prioritize content visibility when space is limited */
+.withCheckoutOpen .item-panel-description {
+  -webkit-line-clamp: 1; /* Show fewer lines when space is limited */
+}
 /* Menu grid */
 .menuItems {
   display: grid;
@@ -457,4 +472,22 @@
 
 .chatbotSendButton:hover {
   background-color: #0056b3;
+}
+.ShareTeaCheckout:focus {
+  outline: 3px solid #4CAF50; 
+  outline-offset: -3px; 
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.3); 
+  transform: translateY(-1px); 
+}
+
+@media (forced-colors: active) {
+  .item-panel:focus {
+    outline: 3px solid HighlightText;
+  }
+}
+.checkoutButton:focus {
+  outline: 3px solid #af574c; 
+  outline-offset: -3px; 
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.3); 
+  transform: translateY(-1px); 
 }

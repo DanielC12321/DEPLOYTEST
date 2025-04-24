@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 import "./cashier.css";
 
@@ -14,6 +15,15 @@ function Cashier() {
   const [size, setSize] = useState('medium');
   const [pearls, setPearls] = useState('standard');
   const [orderItems, setOrderItems] = useState([]);
+  const [numItems, setnumItems] = useState(0);
+
+
+  const location = useLocation();
+  useEffect(() => {
+    if (location.state?.orderItems) {
+      setOrderItems(location.state.orderItems);
+    }
+  }, [location.state?.orderItems]);
 
   const APIURL = process.env.REACT_APP_API_URL; 
   console.log(APIURL);
@@ -31,11 +41,26 @@ function Cashier() {
   }, []);
 
 
-
   const Customize = (ingredient, amount) => {
-    if (ingredient === 'sugar') setSugar(amount);
-    if (ingredient === 'size') setSize(amount);
-    if (ingredient === 'pearls') setPearls(amount);
+    const newItem = {
+      id: currproduct.product_id,
+      product: currproduct.name,
+      cost: currproduct.product_cost,
+      size: size,
+      sugar: sugar,
+      pearls: pearls,
+      itemNum: numItems
+    };
+
+    if (ingredient === 'sugar') {
+      setSugar(amount);
+    }
+    if (ingredient === 'size') {
+      setSize(amount);
+    }
+    if (ingredient === 'pearls') {
+      setPearls(amount);
+    }
   };
 
   const ConfirmCustom = () => {
@@ -44,20 +69,23 @@ function Cashier() {
     //have object that keep track of this and sends it to checkout
     //use the productNum to link with products in database
     const newItem = {
-      id: currproduct.id,
+      id: currproduct.product_id,
       product: currproduct.name,
       cost: currproduct.product_cost,
       size: size,
       sugar: sugar,
       pearls: pearls,
+      itemNum: numItems
     };
     setOrderItems([...orderItems, newItem]);
+    setnumItems(numItems+1);
 
     setOpen(false);
   };
 
-  const removeItem = (itemId) => {
-    setOrderItems(orderItems.filter(item => item.id !== itemId));
+  const removeItem = (itemid) => {
+    setOrderItems(orderItems.filter(item => item.id !== itemid));
+    setnumItems(numItems-1);
   };
 
   
@@ -75,16 +103,7 @@ function Cashier() {
   const checkout = () => {
     if (orderItems.length > 0) {
       navigate("/cashierCheckout", { 
-        state: { 
-          orderItems: orderItems.map(item => ({
-            id: item.id,
-            product: item.product,
-            cost: item.cost,
-            size: item.size,
-            sugar: item.sugar,
-            pearls: item.pearls,
-          }))
-        } 
+        state: { orderItems }
       });
     } else {
       alert("Please add items to your order first.");
@@ -95,10 +114,10 @@ function Cashier() {
   return (
         <div id="cashwrapper">
         <div class="divs" id="cdiv1"><button onClick={logout} id="logout">Logout</button></div>
-        <div class="divs" id="div2"><h1 id="header">Create Order</h1>
+        <div class="divs" id="div2"><h1 id="cheader">Create Order</h1>
         </div>
-        <div class="divs" id="div3"><a>DIVVV</a></div>
-        <div class="divs" id="div4"> Divvv</div>
+        <div class="divs" id="div3"><a></a></div>
+        <div class="divs" id="div4"></div>
         <div class="divs" id="div5">
         {!Open && 
         <div class="menu">
@@ -112,9 +131,8 @@ function Cashier() {
         {Open && (
             <div className="cstmwindow">
               <div className="customize">
-                <h2>Customize Item</h2>
+                <h2>Customize</h2>
                 <h4>Size</h4>
-
                 <div class="customButtons">
                 <button class={size === 'small' ? 'selected' : ''} onClick={() => Customize('size', 'small')}>Small</button>
                 <button class={size === 'medium' ? 'selected' : ''} onClick={() => Customize('size', 'medium')}>Medium</button>
@@ -122,7 +140,6 @@ function Cashier() {
                 </div>
 
                 <h4>Sugar</h4>
-
                 <div class="customButtons">
                 <button class={sugar === 'less' ? 'selected' : ''} onClick={() => Customize('sugar', 'less')}>Less</button>
                 <button class={sugar === 'standard' ? 'selected' : ''} onClick={() => Customize('sugar', 'standard')}>Standard</button>
@@ -149,10 +166,11 @@ function Cashier() {
               {orderItems.length === 0 ? (
                 <p>No items in order</p>
               ) : (
-                orderItems.map(item => (
-                  <div key={item.id} className="order-item">
+                orderItems.map((item, index) => (
+                  <div key={index} className="order-item">
                     <div className="order-header">
                       <span>{item.product}</span>
+                      <spam>Id:{item.id}</spam>
                       <button onClick={() => removeItem(item.id)}>✕</button>
                     </div>
                     <div className="order-details">
@@ -163,9 +181,9 @@ function Cashier() {
               )}
             </div>
         </div>
-        <div class="divs" id="div7"><a>Diva</a></div>
-        <div class="divs" id="div8">Item Selected: {currproduct.name}</div>
-        <div class="divs" id="div9"><button onClick={checkout} id="back">Checkout</button></div>
+        <div class="divs" id="div7"><a></a></div>
+        <div class="divs" id="div8">Item Selected - Name: {currproduct.name} || Item ID: {currproduct.product_id}</div>
+        <div class="divs" id="div9"><button onClick={checkout} id="checkoutButton">Checkout</button></div>
         </div>
   );
 }

@@ -1,0 +1,207 @@
+/* employeeManager.css - Separate styling for the Employee Manager component */
+
+/* Container styles */
+.employee-manager-container {
+    padding: 10px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  
+  /* Navigation bar */
+  .employee-nav-bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  
+  .employee-nav-btn {
+    padding: 6px 12px;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s;
+  }
+  
+  .employee-nav-btn:hover {
+    background-color: #f0f0f0;
+  }
+  
+  /* Page title */
+  .employee-page-title {
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  
+  .employee-page-title h1 {
+    font-size: 24px;
+    color: #333;
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Content layout */
+  .employee-content-layout {
+    display: flex;
+    gap: 15px;
+    flex: 1;
+    overflow: hidden;
+    min-height: 0; /* Important for flex items to respect parent height */
+  }
+  
+  .employee-main-content {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow: hidden;
+    min-height: 0; /* Important for flex children */
+  }
+  
+  .employee-side-panel {
+    flex: 1;
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    overflow-y: auto;
+    max-height: 100%;
+  }
+  
+  /* Table containers */
+  .employee-table-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 0; /* Important for flex children */
+  }
+  
+  /* Section headings */
+  .employee-section-heading {
+    font-size: 18px;
+    margin: 0 0 8px 0;
+    color: #333;
+  }
+  
+  /* Table styles */
+  .employee-scroll-box {
+    flex: 1;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    min-height: 0; /* Important for flex children */
+  }
+  
+  .employee-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .employee-table th {
+    background-color: #4a90e2;
+    color: white;
+    padding: 8px;
+    text-align: left;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+  
+  .employee-table td {
+    padding: 6px 8px;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .employee-table tr:nth-child(even) {
+    background-color: #f5f5f5;
+  }
+  
+  .employee-table tr:hover {
+    background-color: #e1e1e1;
+  }
+  
+  /* Button styles */
+  .employee-btn {
+    padding: 6px 10px;
+    margin-right: 5px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 13px;
+  }
+  
+  .employee-details-btn {
+    background-color: #4a90e2;
+    color: white;
+  }
+  
+  .employee-fire-btn {
+    background-color: #ff4d4d;
+    color: white;
+  }
+  
+  .employee-hire-btn {
+    background-color: #4CAF50;
+    color: white;
+  }
+  
+  .employee-close-btn, .employee-cancel-btn {
+    background-color: #f1f1f1;
+    color: #333;
+    border: 1px solid #ddd;
+  }
+  
+  .employee-button-group {
+    margin-top: 15px;
+    display: flex;
+    gap: 8px;
+  }
+  
+  /* Form styling */
+  .employee-form-group {
+    margin-bottom: 10px;
+  }
+  
+  .employee-form-group label {
+    display: block;
+    margin-bottom: 3px;
+    font-weight: 500;
+    font-size: 14px;
+  }
+  
+  .employee-form-input {
+    width: 100%;
+    padding: 6px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  /* Employee details styling */
+  .employee-details {
+    padding: 5px;
+  }
+  
+  .employee-details p {
+    margin: 6px 0;
+    font-size: 14px;
+  }
+  
+  .employee-performance {
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+  }
+  
+  /* Performance metrics */
+  .employee-performance h3 {
+    font-size: 16px;
+    margin: 0 0 8px 0;
+  }

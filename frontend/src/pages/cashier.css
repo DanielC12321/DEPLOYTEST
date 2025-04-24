@@ -5,40 +5,40 @@
     margin: 0;
     padding: 0;
     display: grid;
-    grid-template-columns: 150px 1050px 1fr;
-    grid-template-rows: 90px 565px 1fr;
+    grid-template-columns: 120px 1050px 1fr;
+    grid-template-rows: 55px 550px 75px;
     overflow: hidden;
 }
 
 .divs {
     margin: 1px;
-    border-style: solid;
-    border-width: 1px;
-    border-color: black;
+
 }
 
 #cdiv1 {
-  padding-top: 25px;
+  padding-top: 15px;
+  padding-left: 10px;
 }
 
 #logout {
     background-color: rgb(255, 255, 255);
     color: rgb(0, 0, 0);
-    padding: 10px 10px;
+    padding: 7px 10px;
     border-color: rgb(212, 212, 212);
-    border-width: 3px;
-    border-radius: 5px;
-    width: 100px;
-    font-size: 10px;
+    border-width: 2px;
+    border-radius: 15px;
+    width: 90%;
+    font-size: 13px;
 }
 
 #div2 {
   padding-left: 235px;
 }
 
-#header {
-    font-size: 50px;
+#cheader {
+    font-size: 30px;
     margin: 10px;
+    padding-right: 250px;
 }
 
 .menu {
@@ -78,19 +78,20 @@
   
 .customize {
   background-color: rgb(248, 127, 127);
-  padding: 20px;
+  padding: 5px 20px;
   border-radius: 8px;
   width: 400px;
-  height: 450px;
+  height: 475px;
   text-align: center;
 }
+
   
   .order {
     align-items: center;
     background-color: rgb(255, 255, 255);
     color: rgb(0, 0, 0);
     padding: 10px;
-    margin: 20px;
+    margin: 40px;
     border: none;
     border-radius: 5px;
   }
@@ -99,26 +100,23 @@
   .customButtons {
     display: inline-flex;
     position: relative;
-    margin-bottom: 20px;
   }
 
   .customButtons button {
     color: black;
-    font-weight: bold;
     border: 0;
     border-bottom: 1px solid black;
     outline: none;
     position: relative;
     top: 0;
-    padding: 7.5px 35px;
-    margin: -1px -1px 1px -1px;
+    padding: 15px 45px;
+    margin: 0px 0px 0px 0px;
     z-index: 10;
-    transition: top 100ms linear;
+    transition: top 50ms linear;
   }
 
   .customButtons button.selected {
-    top: 7px;
-    bottom: -1px;
+    top: 6px;
   }
   .customButtons button.selected:before {
     bottom: 0px;
@@ -132,33 +130,58 @@
     border-radius: 0 5px 5px 0;
   }
   
-  .order {
+.customButtons button:before {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 0px;
+  left: 1px;
+  right: 1px;
+  bottom: -6px;
+  z-index: 5;
+  box-shadow: 0 0 0 1px black;
+}
+      
+.customButtons button:first-child:before {
+    border-radius: 5px 0 0 5px;
+  }
+  .customButtons button:last-child:before {
+    border-radius: 0 5px 5px 0;
+  }
+  
+  #checkoutButton {
     background-color: rgb(255, 255, 255);
     color: rgb(0, 0, 0);
-    padding: 10px;
-    margin-top: 50px;
-    border: none;
-    border-radius: 5px;
+    padding: 10px 10px;
+    border-color: rgb(212, 212, 212);
+    border-style: ridge;
+    border: 2px solid black;
+    width: 100%;
+    height: 100%;
   }
 
   .order-list {
     padding: 10px;
     height: 100%;
     overflow-y: auto;
+    border-left: 2px solid black;
+    border-top: 2px solid black;
+
   }
   
   .order-item {
     background-color: #f9f9f9;
     border-radius: 5px;
     padding: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
     text-align: left;
   }
   
   .order-header {
     display: flex;
     justify-content: space-between;
-    margin: 5px;
+    font-size: 17px;
+
   }
   
   .order-header button {
@@ -171,84 +194,131 @@
   .order-details {
     font-size: 15px;
     color: #666;
-    padding: 15px;
+    padding: 10px;
   }
 
-
-  
-.customButtons button:before {
-  content: '';
-  display: block;
-  position: absolute;
-  top: 0px;
-  left: 1px;
-  right: 1px;
-  bottom: -8px;
-  z-index: 5;
-  box-shadow: 0 0 0 1px black;
-}
-      
-.customButtons button:first-child:before {
-    border-radius: 5px 0 0 5px;
-  }
-  .customButtons button:last-child:before {
-    border-radius: 0 5px 5px 0;
-  }
-  
-  .customButtons button:active {
-    top: 7px;
-  }  
-  .customButtons button:active:before {
-    bottom: 0px;
-  }     
-  
   #checkwrapper {
     width: 100%;
     height: 100vh;
     margin: 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(1, 1fr);
+    grid-template-columns: 75% 25%;
+  }
+  
+  .checkout-wrapper {
+    width: 100%;
+    height: 100vh;
+    text-align: center;
+    border: none;
+    box-sizing: border-box;
   }
 
-  #checkdiv1 {
-   border: 3px solid black;
+  .checkout-order {
+    height: calc(100vh - 50px); 
+    margin-inline: 75px;
+    margin-top: 25px;
+    padding: 20px 40px;
+    border-radius: 15px;
+    background: rgb(109, 151, 218);
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  .scrollorder {
+    height: 80%; 
+    overflow-y: scroll;
+    padding-right: 5px; 
+    box-sizing: border-box;
   }
 
   #OrderTotal {
-    font-size: 40px;
-    margin-top: 50px;
+    font-size: 28px;
+    font-weight: 450;
+    margin-bottom: 20px;
   }
   
-  .checkout-order{
-    height: 90%;
-    width: 900px;
-    padding: 50px;
-    text-align: center;
-    background: rgb(109, 151, 218);
-    overflow-y: auto;
-    border: 3px solid black;
+  #checkdiv1 {
+    align-content: end;
   }
 
   #editOrder {
-    margin: 10px;
+    margin-bottom: 20px;
     width: 100px;
     height: 25px;
     border-radius: 10px;
   }
 
   #checkdiv2 {
-    border: 3px solid black;
+    border: none;
     background-color: rgb(238, 238, 238);
     display: flex;
     flex-direction: column;
+    justify-content: end;
+    align-items: center;
+  }
 
+  #customerName {
+    width: 80%;
+    height: 20px;
+    margin-top: 10px;
+    margin-bottom: 70px;
   }
 
   #placeOrder {
     height: 75px;
+    width: 100%;
     background-color: rgb(255, 151, 172);
     font-size: 20px;
     font-weight: 600;
+    border: none;
+    margin-top: 30px;
+  }
+
+  .toggle-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: sans-serif;
+    font-size: 18px;
+    margin-bottom: 100px;
+  }
+  
+  .toggle-wrapper span.active {
+    font-weight: bold;
+  }
+  
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 80px;
+    height: 36px;
+  }
+  
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    background-color: #ccc;
+    border-radius: 36px;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transition: 0.4s;
+  }
+  
+  .slider::before {
+    position: absolute;
+    content: "";
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    background-color: white;
+    left: 3px;
+    bottom: 3px;
+    transition: 0.2s;
+  }
+  
+  input:checked + .slider::before {
+    transform: translateX(44px);
   }

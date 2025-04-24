@@ -91,6 +91,15 @@ class QueryManager {
             ORDER BY
                 table_name, ordinal_position;
         `,
+        "nutritional-facts": `
+            SELECT
+                COALESCE(STRING_AGG(DISTINCT i.allergen, ', ') FILTER (WHERE i.allergen IS NOT NULL), 'None') AS allergens,
+                COALESCE(STRING_AGG(DISTINCT i.nutrition_concern, ', ') FILTER (WHERE i.nutrition_concern IS NOT NULL), 'None') AS nutrition_concerns
+            FROM product_ingredient pi
+            JOIN ingredients i ON pi.ingredientid = i.ingredientid
+            WHERE pi.product_id = $1;
+        `,
+            
         "debug-connection": "SELECT 1;",
         // Add more queries here
         "product-table": "SELECT * FROM product ORDER BY product_id ASC;",
@@ -106,7 +115,43 @@ class QueryManager {
         "get-ingredient-information": "SELECT ingredientid, cost, name, quantity FROM ingredients WHERE LOWER(name) = LOWER($1);",
         "add-ingredient": "INSERT INTO ingredients (name, cost, quantity) VALUES ($1, $2, $3) RETURNING ingredientid;",
         "last-10-orders": "SELECT * FROM customer_order ORDER BY order_id DESC LIMIT 10;",
-        "get-product-information": "SELECT product_id, name, product_cost FROM product WHERE LOWER(name) = LOWER($1);"
+        "get-product-information": "SELECT product_id, name, product_cost FROM product WHERE LOWER(name) = LOWER($1);",
+        "manager-analytics-total-sales": `
+            SELECT COALESCE(SUM(total_cost::numeric),0) AS total_sales
+            FROM customer_order
+            WHERE datetime::date = $1;
+        `,
+        "manager-analytics-order-count": `
+            SELECT COUNT(*) AS order_count
+            FROM customer_order
+            WHERE datetime::date = $1;
+        `,
+        "manager-analytics-avg-order-value": `
+            SELECT COALESCE(AVG(total_cost::numeric),0) AS avg_value
+            FROM customer_order
+            WHERE datetime::date = $1;
+        `,
+        "manager-analytics-top-products": `
+            SELECT p.name,
+                   SUM(cp.quantity) AS units_sold
+            FROM customer_product cp
+                     JOIN product p ON cp.product_id = p.product_id
+                     JOIN customer_order o ON cp.order_id = o.order_id
+            WHERE o.datetime::date = $1
+            GROUP BY p.name
+            ORDER BY units_sold DESC
+                LIMIT $2;
+        `,
+        "manager-analytics-low-stock": `
+            SELECT name, quantity
+            FROM ingredients
+            WHERE quantity < $1
+            ORDER BY quantity ASC;
+        `,
+        "manager-analytics-employee-count": `
+            SELECT COUNT(*) AS employee_count
+            FROM cashier;
+        `
     };
 }
 

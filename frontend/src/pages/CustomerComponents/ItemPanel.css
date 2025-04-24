@@ -11,13 +11,15 @@
   box-sizing: border-box;
   aspect-ratio: 1 / 1;
   justify-content: flex-start;
+  position: relative;
+  padding-bottom: 25px;
 }
 
 .item-panel-image {
   width: 100%;
   height: 45%; /* Use percentage instead of fixed height */
-  min-height: 80px; /* Set minimum height */
-  max-height: 180px; /* Set maximum height */
+  min-height: 80px;
+  max-height: 180px;
   object-fit: cover;
   border-radius: 6px;
   margin-bottom: 4%; /* Percentage-based margin */
@@ -35,7 +37,7 @@
 
 .item-panel-title {
   margin: 0 0 0.5em 0; /* Use em for margin */
-  font-size: clamp(0.9rem, 0.8vw + 0.6rem, 1.2rem); /* Responsive font size */
+  font-size: clamp(0.8rem, 3vw, 1.2rem); /* Fixed responsive font size */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -46,17 +48,16 @@
   margin: 0 0 0.4em 0;
   color: #4CAF50;
   font-weight: 500;
-  font-size: clamp(0.8rem, 0.7vw + 0.5rem, 1.1rem); /* Responsive font size */
+  font-size: clamp(0.7rem, 2.5vw, 1.1rem); /* Fixed responsive font size */
 }
 
 .item-panel-description {
-  margin: 0;
-  font-size: clamp(0.7rem, 0.6vw + 0.4rem, 0.9rem); /* Responsive font size */
+  margin: 0 0 0.5em 0;
+  font-size: clamp(0.65rem, 2vw, 0.9rem); /* Fixed responsive font size */
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
+  -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   color: #666;
 }
@@ -66,38 +67,100 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
+/* Nutrition section */
+.item-panel-nutrition {
+  margin-top: auto;
+  font-size: clamp(0.6rem, 0.5vw + 0.4rem, 0.8rem);
+  color: #666;
+  width: 100%;
+  border-top: 1px dashed #ddd;
+  padding-top: 0.5em;
+  max-height: none; /* Remove height restriction */
+  overflow: visible; /* Allow content to be fully visible */
+}
+
+.item-panel-allergens, 
+.item-panel-concerns {
+  margin: 0.2em 0;
+  white-space: normal; 
+  overflow: visible; 
+  word-wrap: break-word; 
+  display: block; 
+  line-height: 1.3; 
+}
+
+.nutrition-label {
+  font-weight: 600;
+  color: #555;
+}
+
+
 /* Media query for very small screens */
 @media (max-width: 400px) {
   .item-panel {
     padding: 10px;
   }
   
-  .item-panel-title {
-    font-size: 0.9rem;
-  }
-  
-  .item-panel-price {
-    font-size: 0.8rem;
-  }
-  
   .item-panel-description {
-    font-size: 0.7rem;
     -webkit-line-clamp: 1; /* Show only 1 line on small screens */
+  }
+}
+
+/* Media query for medium screens */
+@media (min-width: 401px) and (max-width: 1199px) {
+  .item-panel-description {
+    -webkit-line-clamp: 1; /* Show only 1 line on medium screens */
   }
 }
 
 /* Media query for large screens */
 @media (min-width: 1200px) {
-  .item-panel-title {
-    font-size: 1.2rem;
-  }
-  
-  .item-panel-price {
-    font-size: 1.1rem;
-  }
-  
   .item-panel-description {
-    font-size: 0.9rem;
-    -webkit-line-clamp: 3; /* Show more text on larger screens */
+    -webkit-line-clamp: 2; /* Allow 2 lines on larger screens */
+  }
+  
+  .item-panel-nutrition {
+    font-size: 0.8rem;
+  }
+}
+
+/* Container query support for browsers that support it */
+@supports (container-type: inline-size) {
+  .item-panel {
+    container-type: inline-size;
+  }
+  
+  @container (max-width: 150px) {
+    .item-panel-title { font-size: 0.7rem; }
+    .item-panel-price { font-size: 0.65rem; }
+    .item-panel-description { font-size: 0.6rem; }
+    .item-panel-nutrition { font-size: 0.6rem; }
+  }
+  
+  @container (min-width: 151px) and (max-width: 200px) {
+    .item-panel-title { font-size: 0.9rem; }
+    .item-panel-price { font-size: 0.8rem; }
+    .item-panel-description { font-size: 0.7rem; }
+    .item-panel-nutrition { font-size: 0.65rem; }
+  }
+  
+  @container (min-width: 201px) {
+    .item-panel-title { font-size: 1.1rem; }
+    .item-panel-price { font-size: 1rem; }
+    .item-panel-description { font-size: 0.9rem; }
+    .item-panel-nutrition { font-size: 0.8rem; }
+  }
+}
+
+.item-panel:focus {
+  outline: 3px solid #4CAF50; 
+  outline-offset: -3px; 
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.3); 
+  transform: translateY(-1px); 
+}
+
+@media (forced-colors: active) {
+  .item-panel:focus {
+    outline: 3px solid HighlightText;
   }
 }

@@ -148,3 +148,16 @@
     }
 }
   
+.mini-category-panel:focus {
+  outline: 7px solid #4CAF50; 
+  outline-offset: -3px; 
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.3);
+  transform: translateY(-1px);
+}
+
+/* If using Windows high contrast mode, ensure focus is still visible */
+@media (forced-colors: active) {
+  .item-panel:focus {
+    outline: 3px solid HighlightText;
+  }
+}

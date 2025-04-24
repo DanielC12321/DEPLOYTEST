@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import GoogleTranslate from './CustomerComponents/GoogleTranslate';
 import ItemPanel from './CustomerComponents/ItemPanel';
 import CustomizationModal from './CustomerComponents/CustomizationModal'; 
 import MiniCategoryPanel from './CustomerComponents/MiniCategoryPanel';
@@ -288,6 +289,13 @@ function Order() {
                     src="https://cdn-icons-png.flaticon.com/512/1413/1413908.png" 
                     className={styles.ShareTeaCheckout} 
                     onClick={toggleCheckout}
+                    tabIndex="0"
+                    role = "button"
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            toggleCheckout();
+                        }
+                    }}
                     alt="Checkout"
                 />
             </div>
@@ -353,7 +361,9 @@ function Order() {
                 <span>Total:</span>
                 <span>${calculateCartTotal()}</span>
                 </div>
-                <button className={styles.checkoutButton} 
+                <button className={styles.checkoutButton}
+                tabIndex="0"
+                role = "button" 
                 onClick={() => navigate('/checkout', { state: { cartItems, total: calculateCartTotal() } })}>
                     Proceed to Checkout
                 </button>
@@ -415,6 +425,7 @@ function Order() {
                     </div>
                 </div>
             )}
+            <GoogleTranslate />
         </div>
     );
 }

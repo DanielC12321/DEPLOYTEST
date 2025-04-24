@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "./managerInventory.css";
+import "./managerEmployee.css"; // Import the new CSS file
 
 function ManagerEmployee() {
   const navigate = useNavigate();
@@ -8,7 +8,6 @@ function ManagerEmployee() {
   const [employeePerformance, setEmployeePerformance] = useState([]);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [showAddForm, setShowAddForm] = useState(false);
-
   const [newEmployee, setNewEmployee] = useState({
     name: "",
     address: "",
@@ -17,17 +16,37 @@ function ManagerEmployee() {
     password: ""
   });
 
-  useEffect(() => {
-    fetch("http://localhost:8001/employee_names")
-      .then(res => res.json())
-      .then(setEmployees)
-      .catch(err => console.error("Failed to fetch employees", err));
+  const APIURL = process.env.REACT_APP_API_URL;
 
-    fetch("http://localhost:8001/cashier_performances")
-      .then(res => res.json())
-      .then(setEmployeePerformance)
-      .catch(err => console.error("Failed to fetch performance", err));
+  // Load data when component mounts
+  useEffect(() => {
+    // Fetch employee data with all details
+    fetchEmployees();
+    fetchPerformanceData();
   }, []);
+
+  // Fetch functions to load data from backend
+  const fetchEmployees = async () => {
+    try {
+      const response = await fetch(`${APIURL}/all_cashier_data`);
+      const data = await response.json();
+      console.log("Employees data:", data);
+      setEmployees(data);
+    } catch (err) {
+      console.error("Failed to fetch employees", err);
+    }
+  };
+
+  const fetchPerformanceData = async () => {
+    try {
+      const response = await fetch(`${APIURL}/cashier_performances`);
+      const data = await response.json();
+      console.log("Performance data:", data);
+      setEmployeePerformance(data);
+    } catch (err) {
+      console.error("Failed to fetch performance data", err);
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -42,18 +61,25 @@ function ManagerEmployee() {
     }
 
     try {
-      const res = await fetch("http://localhost:8001/hire_employee", {
+      const res = await fetch(`${APIURL}/hire_employee`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newEmployee),
+        body: JSON.stringify({
+          name,
+          address,
+          email,
+          phone: phone,
+          password
+        }),
       });
 
       if (res.ok) {
         alert(`Employee ${name} has been hired successfully!`);
         setNewEmployee({ name: "", address: "", email: "", phone: "", password: "" });
         setShowAddForm(false);
-        const updated = await fetch("http://localhost:8001/employee_names").then(r => r.json());
-        setEmployees(updated);
+        
+        // Refresh employee list
+        fetchEmployees();
       } else {
         const err = await res.json();
         alert(`Failed to hire employee: ${err.error}`);
@@ -68,7 +94,7 @@ function ManagerEmployee() {
     if (!window.confirm(`Are you sure you want to fire ${name}?`)) return;
 
     try {
-      const res = await fetch("http://localhost:8001/fire_employee", {
+      const res = await fetch(`${APIURL}/fire_employee`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name }),
@@ -77,8 +103,10 @@ function ManagerEmployee() {
       if (res.ok) {
         alert(`Employee ${name} has been fired.`);
         setSelectedEmployee(null);
-        const updated = await fetch("http://localhost:8001/employee_names").then(r => r.json());
-        setEmployees(updated);
+        
+        // Refresh employee list
+        fetchEmployees();
+        fetchPerformanceData();
       } else {
         const err = await res.json();
         alert(`Failed to fire employee: ${err.error}`);
@@ -90,10 +118,10 @@ function ManagerEmployee() {
   };
 
   const renderEmployeeTable = () => (
-    <div>
-      <h2>Employees</h2>
-      <div className="scroll-box">
-        <table className="full-table">
+    <div className="employee-table-container">
+      <h2 className="employee-section-heading">Employees</h2>
+      <div className="employee-scroll-box">
+        <table className="employee-table">
           <thead>
             <tr><th>ID</th><th>Name</th><th>Actions</th></tr>
           </thead>
@@ -103,10 +131,15 @@ function ManagerEmployee() {
                 <td>{emp.cashierid}</td>
                 <td>{emp.name}</td>
                 <td>
-                  <button onClick={() => setSelectedEmployee(emp)}>Details</button>
                   <button 
+                    className="employee-btn employee-details-btn"
+                    onClick={() => setSelectedEmployee(emp)}
+                  >
+                    Details
+                  </button>
+                  <button 
+                    className="employee-btn employee-fire-btn"
                     onClick={() => fireEmployee(emp.name)}
-                    style={{ backgroundColor: "#ff4d4d", color: "white", marginLeft: 5 }}
                   >
                     Fire
                   </button>
@@ -120,10 +153,10 @@ function ManagerEmployee() {
   );
 
   const renderPerformanceTable = () => (
-    <div>
-      <h2>Performance Metrics</h2>
-      <div className="scroll-box">
-        <table className="full-table">
+    <div className="employee-table-container">
+      <h2 className="employee-section-heading">Performance Metrics</h2>
+      <div className="employee-scroll-box">
+        <table className="employee-table">
           <thead>
             <tr>
               <th>Name</th><th>Orders</th><th>Total Sales</th><th>Avg Order</th>
@@ -134,8 +167,8 @@ function ManagerEmployee() {
               <tr key={emp.cashierid}>
                 <td>{emp.name}</td>
                 <td>{emp.orders_processed || 0}</td>
-                <td>${parseFloat(emp.total_sales || 0).toFixed(2)}</td>
-                <td>${parseFloat(emp.average_order_value || 0).toFixed(2)}</td>
+                <td>${emp.total_sales || "0.00"}</td>
+                <td>${emp.average_order_value || "0.00"}</td>
               </tr>
             ))}
           </tbody>
@@ -143,34 +176,46 @@ function ManagerEmployee() {
       </div>
     </div>
   );
-
+  
   const renderDetails = () => {
     if (!selectedEmployee) return null;
-    const perf = employeePerformance.find(e => e.name === selectedEmployee.name);
+    
+    // Find performance data for the selected employee
+    const perf = employeePerformance.find(e => 
+      String(e.cashierid) === String(selectedEmployee.cashierid)
+    );
 
     return (
-      <div>
-        <h2>Employee Details</h2>
+      <div className="employee-details">
+        <h2 className="employee-section-heading">Employee Details</h2>
         <p><strong>Name:</strong> {selectedEmployee.name}</p>
         <p><strong>ID:</strong> {selectedEmployee.cashierid}</p>
+        <p><strong>Address:</strong> {selectedEmployee.address || ""}</p>
+        <p><strong>Email:</strong> {selectedEmployee.email || ""}</p>
+        <p><strong>Phone:</strong> {selectedEmployee.phonenumber || ""}</p>
 
         {perf && (
-          <div>
-            <h3>Performance</h3>
-            <p><strong>Orders Processed:</strong> {perf.orders_processed}</p>
-            <p><strong>Total Sales:</strong> ${parseFloat(perf.total_sales || 0).toFixed(2)}</p>
-            <p><strong>Average Order Value:</strong> ${parseFloat(perf.average_order_value || 0).toFixed(2)}</p>
+          <div className="employee-performance">
+            <h3 className="employee-section-heading">Performance</h3>
+            <p><strong>Orders Processed:</strong> {perf.orders_processed || 0}</p>
+            <p><strong>Total Sales:</strong> ${perf.total_sales || "0.00"}</p>
+            <p><strong>Average Order Value:</strong> ${perf.average_order_value || "0.00"}</p>
           </div>
         )}
 
-        <div style={{ marginTop: "20px" }}>
+        <div className="employee-button-group">
           <button 
-            onClick={() => fireEmployee(selectedEmployee.name)} 
-            style={{ backgroundColor: "#ff4d4d", color: "white", marginRight: 10 }}
+            className="employee-btn employee-fire-btn"
+            onClick={() => fireEmployee(selectedEmployee.name)}
           >
             Fire
           </button>
-          <button onClick={() => setSelectedEmployee(null)}>Close</button>
+          <button 
+            className="employee-btn employee-close-btn"
+            onClick={() => setSelectedEmployee(null)}
+          >
+            Close
+          </button>
         </div>
       </div>
     );
@@ -178,64 +223,78 @@ function ManagerEmployee() {
 
   const renderAddForm = () => (
     <div>
-      <h2>Hire New Employee</h2>
+      <h2 className="employee-section-heading">Hire New Employee</h2>
       {["name", "address", "email", "phone", "password"].map(field => (
-        <div key={field} style={{ marginBottom: 10 }}>
-          <label>{field.charAt(0).toUpperCase() + field.slice(1)}: </label>
+        <div key={field} className="employee-form-group">
+          <label>
+            {field.charAt(0).toUpperCase() + field.slice(1)}:
+          </label>
           <input 
             type={field === "password" ? "password" : field === "email" ? "email" : "text"}
             name={field}
             value={newEmployee[field]}
             onChange={handleInputChange}
-            style={{ width: "100%" }}
+            className="employee-form-input"
           />
         </div>
       ))}
-      <button onClick={hireEmployee} style={{ backgroundColor: "#4CAF50", color: "white", marginRight: 10 }}>Hire</button>
-      <button onClick={() => setShowAddForm(false)}>Cancel</button>
+      <div className="employee-button-group">
+        <button 
+          className="employee-btn employee-hire-btn"
+          onClick={hireEmployee}
+        >
+          Hire
+        </button>
+        <button 
+          className="employee-btn employee-cancel-btn"
+          onClick={() => setShowAddForm(false)}
+        >
+          Cancel
+        </button>
+      </div>
     </div>
   );
 
+  const toManager = () => {
+    navigate("/manager");
+  }
+
   return (
-    <div style={{ padding: 20 }}>
-    <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginBottom: '20px' }}>
-    <button onClick={() => navigate('/manager')}>Back to Manager</button>
-    <button onClick={() => navigate('/manager/productusagechart')}>Product Usage Chart</button>
-    <button onClick={() => navigate('/manager/salesreport')}>Sales Report</button>
-    <button onClick={() => navigate('/manager/xreport')}>X Report</button>
-    <button onClick={() => navigate('/manager/zreport')}>Z Report</button>
-    <button onClick={() => navigate('/manager/inventory')}>Inventory</button></div>
-      <div style={{ marginBottom: 20, display: "flex", alignItems: "center" }}>
-
-        <h1>Employee Management</h1>
-      </div>
-
-      <div style={{ display: "flex", gap: 20 }}>
-        <div style={{ flex: 2 }}>
-          {renderEmployeeTable()}
-          {renderPerformanceTable()}
+      <div className="employee-manager-container">
+        <div className="divs" id="div1">
+          <button onClick={toManager} id="back">Manager Home</button>
         </div>
-        <div className="side-panel">
-          {selectedEmployee 
-            ? renderDetails() 
-            : showAddForm 
-              ? renderAddForm() 
-              : (
-                <div>
-                  <h2>Employee Management</h2>
-                  <p>Select an employee or add a new one.</p>
-                  <button 
-                    onClick={() => setShowAddForm(true)} 
-                    style={{ backgroundColor: "#4CAF50", color: "white" }}
-                  >
-                    + Hire New Employee
-                  </button>
-                </div>
-              )
-          }
+
+        <div className="employee-page-title">
+          <h1>Employee Management</h1>
+        </div>
+
+        <div className="employee-content-layout">
+          <div className="employee-main-content">
+            {renderEmployeeTable()}
+            {renderPerformanceTable()}
+          </div>
+          <div className="employee-side-panel">
+            {selectedEmployee
+                ? renderDetails()
+                : showAddForm
+                    ? renderAddForm()
+                    : (
+                        <div>
+                          <h2 className="employee-section-heading">Employee Management</h2>
+                          <p> .</p>
+                          <button
+                              className="employee-btn employee-hire-btn"
+                              onClick={() => setShowAddForm(true)}
+                          >
+                            + Hire New Employee
+                          </button>
+                        </div>
+                    )
+            }
+          </div>
         </div>
       </div>
-    </div>
   );
 }
 

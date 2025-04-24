@@ -1,5 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import {
+    Box,
+    Button,
+    Flex,
+    Heading,
+    Text,
+    Input,
+    Table,
+    Thead,
+    Tbody,
+    Tr,
+    Th,
+    Td,
+    useColorModeValue,
+    Select,
+} from '@chakra-ui/react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Bar } from 'react-chartjs-2';
@@ -15,7 +31,6 @@ import {
 } from 'chart.js';
 import zoomPlugin from 'chartjs-plugin-zoom';
 
-// Register Chart.js components and the zoom plugin
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, zoomPlugin);
 
 interface XReportData {
@@ -24,138 +39,97 @@ interface XReportData {
     paymentMethodBreakdown: { [key: string]: number };
 }
 
-/**
- * Converts a raw hour to a formatted time string.
- * Mapping: displayHour = rawHour + 3, then converted to 12-hour format.
- * E.g., raw hour 4 becomes "7 am", raw hour 5 becomes "8 am".
- */
+export let setXReportZeroed: (zero: boolean) => void = () => {};
+
 const convertHour = (rawHour: number): string => {
     let newHour = rawHour + 3;
-    let period = "am";
+    let period = 'am';
     if (newHour >= 12) {
-        period = "pm";
-        if (newHour > 12) {
-            newHour = newHour - 12;
-        }
+        period = 'pm';
+        if (newHour > 12) newHour -= 12;
     }
     return `${newHour} ${period}`;
 };
 
-/**
- * Formats a payment method string with proper capitalization.
- */
 const formatPaymentMethod = (method: string): string => {
     switch (method.toLowerCase()) {
-        case "amex":
-            return "Amex";
-        case "debit":
-            return "Debit";
-        case "giftcard":
-            return "Gift Card";
-        case "visa":
-            return "Visa";
-        case "mastercard":
-            return "MasterCard";
-        case "cash":
-            return "Cash";
+        case 'amex':
+            return 'Amex';
+        case 'debit':
+            return 'Debit';
+        case 'giftcard':
+            return 'Gift Card';
+        case 'visa':
+            return 'Visa';
+        case 'mastercard':
+            return 'MasterCard';
+        case 'cash':
+            return 'Cash';
         default:
             return method.charAt(0).toUpperCase() + method.slice(1).toLowerCase();
     }
 };
 
-/**
- * Exported setter function that external classes (like Z Report) can call
- * to zero out (or unzero) the X Report.
- */
-export let setXReportZeroed: (zero: boolean) => void = () => {};
-
 const XReport: React.FC = () => {
-    const [currentDay, setCurrentDay] = useState<string>("02-17-2025");
-    const [currentHour, setCurrentHour] = useState<number>(14);
+    const [currentDay, setCurrentDay] = useState<string>('2025-02-17');
     const [reportData, setReportData] = useState<XReportData[]>([]);
-    const [adjustmentsData, setAdjustmentsData] = useState<any>({ returns: 0, voids: 0, discards: 0 });
-    const [chartData, setChartData] = useState<any>({
-        labels: [],
-        datasets: [],
+    const [adjustmentsData, setAdjustmentsData] = useState<{ returns: number; voids: number; discards: number }>({
+        returns: 0,
+        voids: 0,
+        discards: 0,
     });
-    const [paymentMethods, setPaymentMethods] = useState<any[]>([]);
-    // Flag to determine if the X report is zeroed out.
+    const [paymentMethods, setPaymentMethods] = useState<{ payment_method: string; total: number }[]>([]);
+    const [chartData, setChartData] = useState<any>({ labels: [], datasets: [] });
     const { isZeroed, setIsZeroed } = useXReport();
 
-    // Expose the setter so external modules can control the zero flag.
     useEffect(() => {
         setXReportZeroed = setIsZeroed;
-    }, []);
+    }, [setIsZeroed]);
 
-    // When the report becomes unzeroed, reload data automatically.
     useEffect(() => {
-        if (!isZeroed) {
-            loadData();
-        }
-    }, [isZeroed]);
+        if (!isZeroed) loadData();
+    }, [isZeroed, currentDay]);
 
-    // Fetch data from API and update the chart
     const loadData = async () => {
-        // If the report is zeroed out, skip data loading.
         if (isZeroed) return;
         const apiUrl = process.env.REACT_APP_API_URL;
-
         try {
-            // Fetch hourly sales data
-            const salesResponse = await fetch(`${apiUrl}/x-report-sales?current_day=${currentDay}&current_hour=${currentHour}`);
-            const salesData = await salesResponse.json();
+            const salesRes = await fetch(`${apiUrl}/x-report-sales?current_day=${currentDay}&current_hour=24`);
+            const sales = await salesRes.json();
 
-            // Fetch adjustments data (returns, voids, discards)
-            const adjustmentsResponse = await fetch(`${apiUrl}/x-report-adjustments?current_day=${currentDay}&current_hour=24`);
-            const adjustments = await adjustmentsResponse.json();
-            // If adjustments is an array, use the first element
-            const parsedAdjustments = Array.isArray(adjustments) && adjustments.length > 0
-                ? adjustments[0]
-                : adjustments;
-            setAdjustmentsData(parsedAdjustments);
+            const adjRes = await fetch(`${apiUrl}/x-report-adjustments?current_day=${currentDay}&current_hour=24`);
+            const adjJson = await adjRes.json();
+            const adj = Array.isArray(adjJson) && adjJson.length > 0 ? adjJson[0] : adjJson;
+            setAdjustmentsData(adj);
 
-            // Fetch payment method breakdown
-            const paymentResponse = await fetch(`${apiUrl}/x-report-payment-methods?current_day=${currentDay}&current_hour=24`);
-            const paymentData = await paymentResponse.json();
-            setPaymentMethods(paymentData);
+            const pmRes = await fetch(`${apiUrl}/x-report-payment-methods?current_day=${currentDay}&current_hour=24`);
+            const pmJson = await pmRes.json();
+            setPaymentMethods(pmJson);
 
-            // Combine data into one report
-            const combinedData = salesData.map((item: any) => {
-                const hourData = {
-                    hour: item.hour,
-                    sales: item.sales,
-                    paymentMethodBreakdown: paymentData.reduce((acc: any, curr: any) => {
-                        acc[curr.payment_method] = curr.total;
-                        return acc;
-                    }, {}),
-                };
-                return hourData;
-            });
+            const combined: XReportData[] = sales.map((item: any) => ({
+                hour: item.hour,
+                sales: item.sales,
+                paymentMethodBreakdown: pmJson.reduce((acc: any, curr: any) => {
+                    acc[curr.payment_method] = curr.total;
+                    return acc;
+                }, {}),
+            }));
 
-            setReportData(combinedData);
-            updateChart(combinedData);
-        } catch (error) {
-            console.error('Error loading data:', error);
-            alert('Error loading data');
+            setReportData(combined);
+            updateChart(combined);
+        } catch (err) {
+            console.error('Error loading X Report:', err);
+            alert('Error loading X Report');
         }
     };
 
-    useEffect(() => {
-        loadData();
-    }, []); // Run once on component mount
-
-    // Update chart dataset based on new data (excluding adjustments data)
     const updateChart = (data: XReportData[]) => {
-        // Use the helper function to format the hour labels.
-        const labels = data.map(item => convertHour(item.hour));
-        const salesValues = data.map(item => item.sales);
-
         setChartData({
-            labels,
+            labels: data.map(d => convertHour(d.hour)),
             datasets: [
                 {
                     label: 'Sales ($)',
-                    data: salesValues,
+                    data: data.map(d => d.sales),
                     backgroundColor: 'rgba(75,192,192,0.4)',
                     borderColor: 'rgba(75,192,192,1)',
                     borderWidth: 1,
@@ -164,128 +138,138 @@ const XReport: React.FC = () => {
         });
     };
 
-    // Prepare displayed data based on the zero flag.
-    const displayedReportData = isZeroed ? [] : reportData;
-    const displayedAdjustments = isZeroed ? { returns: 0, voids: 0, discards: 0 } : adjustmentsData;
-    const displayedChartData = isZeroed ? { labels: [], datasets: [] } : chartData;
-    const displayedPaymentMethods = isZeroed ? [] : paymentMethods;
+    // Determine what to display when zeroed
+    const dispReport = isZeroed ? [] : reportData;
+    const dispAdjust = isZeroed ? { returns: 0, voids: 0, discards: 0 } : adjustmentsData;
+    const dispPM = isZeroed ? [] : paymentMethods;
+    const dispChart = isZeroed ? { labels: [], datasets: [] } : chartData;
 
     return (
-        <div>
-            {/* Static Navbar */}
-            <header style={{
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                right: 0,
-                backgroundColor: '#fff',
-                zIndex: 1000,
-                padding: '10px',
-                borderBottom: '1px solid #ccc',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center'
-            }}>
-                {/* Button Container */}
-                <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
+        <Box p={4}>
+            {/* Navbar */}
+            <Flex
+                direction="column"
+                position="fixed"
+                top={0}
+                left={0}
+                right={0}
+                bg="white"
+                zIndex={1000}
+                p={4}
+                borderBottom="1px"
+                borderColor="gray.200"
+            >
+                <Flex gap={3} justify="center" flexWrap="wrap">
                     <Link to="/manager">
-                        <button>Back to Manager</button>
+                        <Button size="sm" colorScheme="blue" variant="solid">
+                            Back to Manager
+                        </Button>
                     </Link>
                     <Link to="/manager/productusagechart">
-                        <button>Product Usage Chart</button>
+                        <Button size="sm" colorScheme="teal" variant="outline">
+                            Product Usage Chart
+                        </Button>
                     </Link>
                     <Link to="/manager/salesreport">
-                        <button>Sales Report</button>
+                        <Button size="sm" colorScheme="teal" variant="outline">
+                            Sales Report
+                        </Button>
                     </Link>
                     <Link to="/manager/xreport">
-                        <button>X Report</button>
+                        <Button size="sm" colorScheme="teal" variant="solid">
+                            X Report
+                        </Button>
                     </Link>
                     <Link to="/manager/zreport">
-                        <button>Z Report</button>
+                        <Button size="sm" colorScheme="teal" variant="outline">
+                            Z Report
+                        </Button>
                     </Link>
                     <Link to="/manager/inventory">
-                        <button>Inventory</button>
+                        <Button size="sm" colorScheme="teal" variant="outline">
+                            Inventory
+                        </Button>
                     </Link>
-                </div>
+                </Flex>
 
-                {/* Controls: Date Picker, Load Data, and Unzero button */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '10px' }}>
-                    <div>
-                        <label>Current Day: </label>
+                {/* Controls */}
+                <Flex gap={4} align="center" justify="center" mt={4} flexWrap="wrap">
+                    <Box>
+                        <Text fontSize="sm">Current Day</Text>
                         <DatePicker
                             selected={new Date(currentDay)}
-                            onChange={(date: Date) => setCurrentDay(date!.toISOString().split('T')[0])}
+                            onChange={date => setCurrentDay(date!.toISOString().split('T')[0])}
                             dateFormat="yyyy-MM-dd"
+                            customInput={<Input size="sm" variant="outline" />}
                         />
-                    </div>
-                    <button onClick={loadData}>Load Data</button>
-                    <button onClick={() => setIsZeroed(false)}>Reset X Report</button>
-                </div>
-            </header>
+                    </Box>
+                    <Button size="sm" colorScheme="red" onClick={() => setIsZeroed(false)}>
+                        Reset X Report
+                    </Button>
+                </Flex>
+            </Flex>
 
-            {/* Page Title */}
-            <div style={{ marginTop: '100px', textAlign: 'center' }}>
-                <h1>X Report</h1>
-            </div>
+            {/* Title */}
+            <Box mt="160px" textAlign="center">
+                <Heading size="lg">X Report</Heading>
+            </Box>
 
-            {/* Main Content: Three Columns (Receipt, Table, Chart) */}
-            <div style={{ display: 'flex', gap: '20px', padding: '10px' }}>
-                {/* Left Column: Receipt (Adjustments & Payment Methods) */}
-                <div style={{
-                    flex: 1,
-                    minWidth: '250px',
-                    border: '1px solid #ccc',
-                    backgroundColor: '#f9f9f9',
-                    padding: '10px'
-                }}>
-                    <h3>Adjustments</h3>
-                    <p><strong>Returns:</strong> ${displayedAdjustments.returns}</p>
-                    <p><strong>Voids:</strong> ${displayedAdjustments.voids}</p>
-                    <p><strong>Discards:</strong> ${displayedAdjustments.discards}</p>
-                    <hr style={{ margin: '20px 0' }} />
-                    <h3>Payment Methods</h3>
-                    <table style={{ width: '100%', borderCollapse: 'collapse' }} border={1}>
-                        <thead>
-                        <tr>
-                            <th>Method</th>
-                            <th>Total ($)</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {displayedPaymentMethods.map((method, index) => (
-                            <tr key={index}>
-                                <td>{formatPaymentMethod(method.payment_method)}</td>
-                                <td>${method.total}</td>
-                            </tr>
-                        ))}
-                        </tbody>
-                    </table>
-                </div>
+            {/* Main Content */}
+            <Flex direction={['column', 'row']} gap={6} mt={6}>
+                {/* Adjustments & Payment Methods */}
+                <Box flex={1} borderWidth={1} borderRadius="md" p={4} bg={useColorModeValue('gray.50', 'gray.800')}>
+                    <Heading size="md" mb={2}>
+                        Adjustments
+                    </Heading>
+                    <Text><strong>Returns:</strong> ${dispAdjust.returns}</Text>
+                    <Text><strong>Voids:</strong> ${dispAdjust.voids}</Text>
+                    <Text><strong>Discards:</strong> ${dispAdjust.discards}</Text>
 
-                {/* Center Column: Data Table */}
-                <div style={{ flex: 1, minWidth: '250px', maxHeight: '500px', overflowY: 'auto', border: '1px solid #ccc' }}>
-                    <table style={{ width: '100%', borderCollapse: 'collapse' }} border={1}>
-                        <thead>
-                        <tr>
-                            <th>Time</th>
-                            <th>Sales ($)</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {displayedReportData.map((row, index) => (
-                            <tr key={index}>
-                                <td>{convertHour(row.hour)}</td>
-                                <td>${row.sales}</td>
-                            </tr>
-                        ))}
-                        </tbody>
-                    </table>
-                </div>
+                    <Heading size="md" mt={4} mb={2}>
+                        Payment Methods
+                    </Heading>
+                    <Table size="sm" variant="simple">
+                        <Thead bg={useColorModeValue('gray.100', 'gray.700')} position="sticky" top={0} zIndex={1}>
+                            <Tr>
+                                <Th>Method</Th>
+                                <Th isNumeric>Total ($)</Th>
+                            </Tr>
+                        </Thead>
+                        <Tbody>
+                            {dispPM.map((m, i) => (
+                                <Tr key={i}>
+                                    <Td>{formatPaymentMethod(m.payment_method)}</Td>
+                                    <Td isNumeric>{m.total}</Td>
+                                </Tr>
+                            ))}
+                        </Tbody>
+                    </Table>
+                </Box>
 
-                {/* Right Column: Bar Chart */}
-                <div style={{ flex: 1, minWidth: '250px', height: '500px', border: '1px solid #ccc', padding: '10px' }}>
+                {/* Hourly Sales Table */}
+                <Box flex={1} maxH="500px" overflowY="auto" borderWidth={1} borderRadius="md" p={4}>
+                    <Table size="sm" variant="simple">
+                        <Thead bg={useColorModeValue('gray.100', 'gray.700')} position="sticky" top={0} zIndex={1}>
+                            <Tr>
+                                <Th>Time</Th>
+                                <Th isNumeric>Sales ($)</Th>
+                            </Tr>
+                        </Thead>
+                        <Tbody>
+                            {dispReport.map((row, i) => (
+                                <Tr key={i}>
+                                    <Td>{convertHour(row.hour)}</Td>
+                                    <Td isNumeric>{row.sales}</Td>
+                                </Tr>
+                            ))}
+                        </Tbody>
+                    </Table>
+                </Box>
+
+                {/* Sales Chart */}
+                <Box flex={1} height="500px" borderWidth={1} borderRadius="md" p={4}>
                     <Bar
-                        data={displayedChartData}
+                        data={dispChart}
                         options={{
                             responsive: true,
                             maintainAspectRatio: false,
@@ -303,9 +287,9 @@ const XReport: React.FC = () => {
                             },
                         }}
                     />
-                </div>
-            </div>
-        </div>
+                </Box>
+            </Flex>
+        </Box>
     );
 };
 

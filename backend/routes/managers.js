@@ -214,33 +214,93 @@ router.post('/hire_employee', async (req, res) => {
   }
 });
 //http://localhost:8001/cashier_performances
+
 router.get('/cashier_performances', async (req, res) => {
   try {
     const data = await Database.executeQuery('cashier-performances');
-    res.json(data);
+    
+    const processedData = data.map(emp => {
+      const totalOrders = parseInt(emp.total_orders || '0', 10);
+      
+      let totalSales = 0;
+      if (emp.total_sales) {
+        totalSales = parseFloat(
+          emp.total_sales.replace(/[$,]/g, '')
+        );
+      }
+      
+      const avgOrderValue = totalOrders > 0 ? 
+        (totalSales / totalOrders) : 0;
+      
+      return {
+        cashierid: emp.cashierid,
+        name: emp.name,
+        orders_processed: totalOrders,
+        total_sales: totalSales.toFixed(2),
+        average_order_value: avgOrderValue.toFixed(2)
+      };
+    });
+    
+    res.json(processedData);
   } catch (err) {
+    console.error('Error fetching cashier performances:', err);
     res.status(500).json({ error: 'cashier performance query failed' });
   }
 });
+
+
+
 //http://localhost:8001/employee_credentials?id=1&isManager=true
 router.get('/employee_credentials', async (req, res) => {
-  const{id, isManager} = req.query;
-  if (!id || !isManager) {
-    return res.status(400).json({ error: 'Missing id or isManager' });
-  } 
+  const { id, isManager } = req.query;
+  
+  if (!id) {
+    return res.status(400).json({ error: 'Missing id parameter' });
+  }
 
   try {
-    if(isManager==="true"){
-      const data = await Database.executeQuery('get-manager-creds', [id]);
+    let query;
+    if (isManager === 'true') {
+      query = 'SELECT managerid, name, address, email, phonenumber, password FROM manager WHERE managerid = $1';
+    } else {
+      query = 'SELECT cashierid, name, address, email, phonenumber, password FROM cashier WHERE cashierid = $1';
+    }
+
+    const data = await Database.executeCustomQuery(query, [id]);
+    
+    if (data && data.length > 0) {
       res.json(data);
-    }else{
-      const data = await Database.executeQuery('get-cashier-creds', [id]);
-      res.json(data);
+    } else {
+      res.status(404).json({ error: 'Employee not found' });
     }
   } catch (err) {
-    res.status(500).json({ error: 'Database query failed' });
+    console.error('Error fetching credentials:', err);
+    res.status(500).json({ error: 'Failed to fetch credentials' });
   }
 });
+
+router.get('/employee_detail/:id', async (req, res) => {
+  try {
+    const data = await Database.executeCustomQuery('SELECT * FROM cashier WHERE cashierid = $1', [req.params.id]);
+    res.json(data);
+  } catch (err) {
+    console.error('Error getting employee details:', err);
+    res.status(500).json({ error: 'Failed to get employee details' });
+  }
+});
+
+router.get('/all_cashier_data', async (req, res) => {
+  try {
+    const data = await Database.executeCustomQuery('SELECT * FROM cashier');
+    res.json(data);
+  } catch (err) {
+    console.error('Error getting all cashier data:', err);
+    res.status(500).json({ error: 'Failed to get all cashier data' });
+  }
+});
+
+
+
 //Use postman For link: http://localhost:8001/users/add_product 
 /* For body {
   "name": "Product Name",
@@ -325,4 +385,175 @@ router.delete('/delete_ingredient', async (req, res) => {
     res.status(500).json({ error: 'Delete ingredient query failed' });
   }
 });
+router.get('/weather', async (req, res) => {
+  try {
+    // 1) Fetch the latest observation from KCLL
+    const apiUrl = 'https://api.weather.gov/stations/KCLL/observations/latest';
+    const apiRes = await fetch(apiUrl);
+    if (!apiRes.ok) {
+      return res.status(apiRes.status).json({ error: 'Failed to fetch weather data' });
+    }
+
+    // 2) Parse the JSON
+    const json = await apiRes.json();
+    const props = json.properties || {};
+    const tempC = props.temperature?.value;
+    const shortForecast = props.textDescription || 'Unknown';
+    const windSpeedKph = props.windSpeed?.value;
+    const icon = props.icon || null;
+
+    // Optional: convert to Fahrenheit and wind speed to mph
+    const tempF = (tempC !== null && tempC !== undefined)
+        ? Number((tempC * 9/5 + 32).toFixed(1))
+        : null;
+
+    const windSpeedMph = (windSpeedKph !== null && windSpeedKph !== undefined)
+        ? Number((windSpeedKph * 0.621371).toFixed(1))
+        : null;
+
+    // 4) Send a JSON response with new fields
+    res.json({
+      temperature: tempF !== null ? `${tempF} °F` : null,
+      shortForecast: shortForecast,
+      windSpeed: windSpeedMph !== null ? `${windSpeedMph} mph` : null,
+      icon
+    });
+
+  } catch (err) {
+    console.error('Weather route error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+router.get('/manager/analytics/overview', async (req, res) => {
+  // Allow overrides, otherwise default to today
+  const date = '02-17-2025';
+  const limit = 10;
+  const threshold = 80;
+
+  try {
+    // fire all six queries at once
+    const [
+      totalSalesRows,
+      orderCountRows,
+      avgOrderValueRows,
+      topProductsRows,
+      lowStockRows,
+      employeeCountRows,
+    ] = await Promise.all([
+      Database.executeQuery('manager-analytics-total-sales', [date]),
+      Database.executeQuery('manager-analytics-order-count', [date]),
+      Database.executeQuery('manager-analytics-avg-order-value', [date]),
+      Database.executeQuery('manager-analytics-top-products', [date, limit]),
+      Database.executeQuery('manager-analytics-low-stock', [threshold]),
+      Database.executeQuery('manager-analytics-employee-count', []),
+    ]);
+
+    // extract scalars from the first row of each result
+    const totalSales = parseFloat(totalSalesRows[0]?.total_sales) || 0;
+    const orderCount = parseInt(orderCountRows[0]?.order_count, 10) || 0;
+    const avgOrderValue = parseFloat(avgOrderValueRows[0]?.avg_value) || 0;
+    const topProducts = topProductsRows;      // array of { name, units_sold }
+    const lowStock = lowStockRows;            // array of { name, quantity }
+    const employeeCount = parseInt(employeeCountRows[0]?.employee_count, 10) || 0;
+
+    res.json({
+      totalSales,
+      orderCount,
+      avgOrderValue,
+      topProducts,
+      lowStock,
+      employeeCount,
+    });
+  } catch (err) {
+    console.error('Analytics overview error:', err);
+    res.status(500).json({ error: 'Database query failed' });
+  }
+});
+
+router.get('/manager/analytics/total-sales', async (req, res) => {
+  const { date } = req.query;
+
+  if (!date) {
+    return res.status(400).json({ error: 'Missing date' });
+  }
+
+  try {
+    const data = await Database.executeQuery('manager-analytics-total-sales', [date]);
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: 'Database query failed' });
+  }
+});
+
+router.get('/manager/analytics/order-count', async (req, res) => {
+  const { date } = req.query;
+
+  if (!date) {
+    return res.status(400).json({ error: 'Missing date' });
+  }
+
+  try {
+    const data = await Database.executeQuery('manager-analytics-order-count', [date]);
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: 'Database query failed' });
+  }
+});
+
+router.get('/manager/analytics/avg-order-value', async (req, res) => {
+  const { date } = req.query;
+
+  if (!date) {
+    return res.status(400).json({ error: 'Missing date' });
+  }
+
+  try {
+    const data = await Database.executeQuery('manager-analytics-avg-order-value', [date]);
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: 'Database query failed' });
+  }
+});
+
+router.get('/manager/analytics/top-products', async (req, res) => {
+  const { date, limit } = req.query;
+
+  if (!date || !limit) {
+    return res.status(400).json({ error: 'Missing date or limit' });
+  }
+
+  try {
+    const data = await Database.executeQuery('manager-analytics-top-products', [date, limit]);
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: 'Database query failed' });
+  }
+});
+
+router.get('/manager/analytics/low-stock', async (req, res) => {
+  const { threshold } = req.query;
+
+  if (!threshold) {
+    return res.status(400).json({ error: 'Missing threshold' });
+  }
+
+  try {
+    const data = await Database.executeQuery('manager-analytics-low-stock', [threshold]);
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: 'Database query failed' });
+  }
+});
+
+router.get('/manager/analytics/employee-count', async (req, res) => {
+  try {
+    const data = await Database.executeQuery('manager-analytics-employee-count');
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: 'Database query failed' });
+  }
+});
+
+
 module.exports = router;
