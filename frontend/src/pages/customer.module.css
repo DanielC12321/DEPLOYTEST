@@ -193,7 +193,7 @@
 /* Checkout button */
 .checkoutButton {
   background-color: #4CAF50;
-  color: white;
+  color: rgb(0, 0, 0);
   border: none;
   padding: 12px;
   border-radius: 4px;
@@ -256,7 +256,7 @@
 /* Empty cart message */
 .emptyCart {
   text-align: center;
-  color: #888;
+  color: #000000;
   padding: 20px 0;
   font-style: italic;
 }
