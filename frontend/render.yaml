@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: deploytest-frontend # Or your frontend service name on Render
+    env: static
+    buildCommand: npm install && npm run build # Or your build command
+    staticPublishPath: ./build # Path to your build output directory
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
