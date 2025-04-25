@@ -46,7 +46,7 @@
 
 .item-panel-price {
   margin: 0 0 0.4em 0;
-  color: #4CAF50;
+  color: #2B5F2C;
   font-weight: 500;
   font-size: clamp(0.7rem, 2.5vw, 1.1rem); /* Fixed responsive font size */
 }
@@ -59,7 +59,7 @@
   display: -webkit-box;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
-  color: #666;
+  color: #000000;
 }
 
 .item-panel:hover {
@@ -91,7 +91,7 @@
 
 .nutrition-label {
   font-weight: 600;
-  color: #555;
+  color: #000000;
 }
 
 
