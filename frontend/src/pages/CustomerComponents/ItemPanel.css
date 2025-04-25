@@ -71,7 +71,7 @@
 .item-panel-nutrition {
   margin-top: auto;
   font-size: clamp(0.6rem, 0.5vw + 0.4rem, 0.8rem);
-  color: #666;
+  color: #000;
   width: 100%;
   border-top: 1px dashed #ddd;
   padding-top: 0.5em;
