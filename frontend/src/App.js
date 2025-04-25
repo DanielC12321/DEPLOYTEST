@@ -37,7 +37,7 @@ function App() {
             <div className="App">
                 <Routes>
                     {/* Redirect landing */}
-                    <Route path="/" element={<Navigate to="/order/pure-teas" />} />
+                    <Route path="/" element={<Navigate to="/checkout" />} />
 
                     {/* Public / pure-CSS route */}
                     <Route path="/manager/inventory" element={<ManagerInventory />} />
