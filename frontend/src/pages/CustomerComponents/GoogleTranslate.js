@@ -34,7 +34,7 @@ function GoogleTranslate() {
   }, []);
   
   return (
-    <div className="translate-container">
+    <div className="translate-container" role = "navigation" aria-label="Language selection">
       <div id="google-translate-element"></div>
     </div>
   );
