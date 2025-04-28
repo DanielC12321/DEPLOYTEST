@@ -496,6 +496,8 @@ function Order() {
                     <img 
                         src="https://franchise.sharetea.com.au/wp-content/uploads/2021/08/cropped-Favicon.png" 
                         alt="Share Tea Logo" 
+                        aria-label='Share Tea Logo'
+                        id='pass1'
                         style={{ cursor: 'pointer' }}
                     />
                 </div>
