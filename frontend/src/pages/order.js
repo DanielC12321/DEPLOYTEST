@@ -492,7 +492,7 @@ function Order() {
         style={weatherBackground.styles} // Apply dynamic background based on weather
         >
             <div className={styles.ShareTeaHeader}>
-                <div className={styles.ShareTeaLogo}>
+                <div className={styles.ShareTeaLogo} role = "img">
                     <img 
                         src="https://franchise.sharetea.com.au/wp-content/uploads/2021/08/cropped-Favicon.png" 
                         alt="Share Tea Logo" 
