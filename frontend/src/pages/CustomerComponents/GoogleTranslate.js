@@ -9,17 +9,17 @@ function GoogleTranslate() {
       script.async = true;
       document.body.appendChild(script);
     };
-
+    
     window.googleTranslateElementInit = () => {
       new window.google.translate.TranslateElement(
         {
           pageLanguage: 'en',
-          layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE
+          layout: window.google.translate.TranslateElement.InlineLayout.DROPDOWN
         },
         'google-translate-element'
       );
     };
-
+    
     if (!document.querySelector('script[src*="translate.google.com/translate_a"]')) {
       addScript();
     } else {
@@ -27,12 +27,12 @@ function GoogleTranslate() {
         window.googleTranslateElementInit();
       }
     }
-
+    
     return () => {
       delete window.googleTranslateElementInit;
     };
   }, []);
-
+  
   return (
     <div className="translate-container">
       <div id="google-translate-element"></div>
