@@ -12,31 +12,92 @@ function Login() {
     cashier: { username: "cashier", password: "cashier123" },
     manager: { username: "manager", password: "manager123" },
   };
-  const handleLogin = (e) => {
+  // Update the handleLogin function in your Login component
+  const handleLogin = async (e) => {
     e.preventDefault();
-
-    if (
-      username === demoCredentials.cashier.username &&
-      password === demoCredentials.cashier.password
-    ) {
-      navigate("/cashier");
-    } else if (
-      username === demoCredentials.manager.username &&
-      password === demoCredentials.manager.password
-    ) {
-      navigate("/manager");
-    } else {
-      alert("Invalid credentials. Please try again.");
+    
+    try {
+      // Call your new login endpoint
+      const response = await fetch(`${apiUrl}/api/loginDB/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ 
+          email: username, // Using username field as email
+          password: password 
+        }),
+      });
+  
+      // Handle API response
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Login successful:", data);
+        
+        // Store user information in localStorage
+        localStorage.setItem('userId', data.user.cashierid || data.user.managerid);
+        localStorage.setItem('userRole', data.user.role);
+        
+        // Navigate based on role
+        if (data.user.role === "cashier") {
+          navigate("/cashier");
+        } else if (data.user.role === "manager") {
+          navigate("/manager");
+        } else {
+          alert("Unknown role. Please contact support.");
+        }
+      } else {
+        // Handle unsuccessful login
+        const errorData = await response.json();
+        console.error("Login failed:", errorData.error);
+        
+        // Fall back to demo credentials if API login fails
+        if (
+          username === demoCredentials.cashier.username &&
+          password === demoCredentials.cashier.password
+        ) {
+          localStorage.setItem('userId', '1');
+          localStorage.setItem('userRole', 'cashier');
+          navigate("/cashier");
+        } else if (
+          username === demoCredentials.manager.username &&
+          password === demoCredentials.manager.password
+        ) {
+          localStorage.setItem('userId', '1');
+          localStorage.setItem('userRole', 'manager');
+          navigate("/manager");
+        } else {
+          alert(errorData.error || "Invalid credentials. Please try again.");
+        }
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+      
+      // Fall back to demo credentials if API call fails
+      if (
+        username === demoCredentials.cashier.username &&
+        password === demoCredentials.cashier.password
+      ) {
+        localStorage.setItem('userId', '1');
+        localStorage.setItem('userRole', 'cashier');
+        navigate("/cashier");
+      } else if (
+        username === demoCredentials.manager.username &&
+        password === demoCredentials.manager.password
+      ) {
+        localStorage.setItem('userId', '1');
+        localStorage.setItem('userRole', 'manager');
+        navigate("/manager");
+      } else {
+        alert("Login failed. Please try again.");
+      }
     }
   };
 
-  const handleCustomer = () => {
-    navigate("/customer");
-  };
-
+  // Update the handleGoogleSuccess function
   const handleGoogleSuccess = async (credentialResponse) => {
     const token = credentialResponse.credential;
-  
+
     try {
       // Send the token to the backend for verification
       const response = await fetch(`${apiUrl}/api/loginDB/verify`, {
@@ -46,11 +107,15 @@ function Login() {
         },
         body: JSON.stringify({ token }),
       });
-  
+
       if (response.ok) {
         const data = await response.json();
         console.log("User Info from Backend:", data);
-  
+
+        // Store user info in localStorage
+        localStorage.setItem('userId', data.user.cashierid || data.user.managerid);
+        localStorage.setItem('userRole', data.user.role);
+
         // Redirect the user based on their role
         if (data.user.role === "cashier") {
           navigate("/cashier");
@@ -64,17 +129,26 @@ function Login() {
         console.error("Error from backend:", errorData.error);
         alert("Login failed: " + errorData.error);
       }
-    } catch (error) {
-      console.error("Error during Google login:", error);
-      alert("An error occurred during login. Please try again.");
-    }
-  };
+      } catch (error) {
+        console.error("Error during Google login:", error);
+        alert("An error occurred during login. Please try again.");
+      }
+    };
 
-  const handleGoogleFailure = () => {
-    console.error("Google Login Failed");
-    alert("Google Login Failed. Please try again.");
-  };
+    // Update the handleCustomer function
+    const handleCustomer = () => {
+      // Store customer role in localStorage (no ID needed for customers)
+      localStorage.setItem('userRole', 'customer');
+      navigate("/customer");
+    };
 
+    const handleGoogleFailure = () => {
+      console.error("Google Login Failed");
+      alert("Google Login Failed. Please try again.");
+    };
+    const handleMenuBoard = () => {
+      navigate("/menuboard");
+    };
   return (
     <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
       <div className="outer-container">
@@ -108,6 +182,9 @@ function Login() {
               </button>
               <button onClick={handleCustomer} className="button">
                 Continue as Customer
+              </button>
+              <button onClick={handleMenuBoard} className="button">
+                MenuBoard
               </button>
             </form>
             <div className="google-login">

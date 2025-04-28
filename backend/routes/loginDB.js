@@ -54,4 +54,57 @@ router.post("/verify", async (req, res) => {
     }
 });
 
+// Email/password login verification endpoint (without bcrypt)
+router.post("/login", async (req, res) => {
+    const { email, password } = req.body;
+    
+    if (!email || !password) {
+        return res.status(400).json({ error: "Email and password are required" });
+    }
+
+    try {
+        // Check if the user exists in the cashier table with matching password
+        const cashierResult = await Database.executeCustomQuery(
+            "SELECT * FROM cashier WHERE email = $1 AND password = $2",
+            [email, password]
+        );
+
+        if (cashierResult.length > 0) {
+            return res.status(200).json({
+                message: "Login successful as cashier",
+                user: { 
+                    cashierid: cashierResult[0].cashierid,
+                    name: cashierResult[0].name,
+                    email: cashierResult[0].email,
+                    role: "cashier" 
+                }
+            });
+        }
+
+        // Check if the user exists in the manager table with matching password
+        const managerResult = await Database.executeCustomQuery(
+            "SELECT * FROM manager WHERE email = $1 AND password = $2",
+            [email, password]
+        );
+
+        if (managerResult.length > 0) {
+            return res.status(200).json({
+                message: "Login successful as manager",
+                user: { 
+                    managerid: managerResult[0].managerid,
+                    name: managerResult[0].name,
+                    email: managerResult[0].email,
+                    role: "manager" 
+                }
+            });
+        }
+
+        // If no valid credentials were found
+        res.status(401).json({ error: "Invalid email or password" });
+    } catch (error) {
+        console.error("Error during login verification:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+
 module.exports = router;

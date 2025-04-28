@@ -118,13 +118,15 @@ function CashierCheckout() {
 }
 */
 
+const cashierId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+
 const orderData = {
   productIDs: productIds,
   totalCost: totalCost,
   customerName: customerName,
   paymentMethod: payment,
   taxRate: 0.0825,
-  cashierId: 1,
+  cashierId: cashierId,
 };
 
 console.log(orderData); 
@@ -140,7 +142,7 @@ console.log(orderData);
             "customerName" : customerName,
             "paymentMethod": 'cash',
             "taxRate": 6.25,         
-            "cashierId" : 1,
+            "cashierId" : cashierId,
           }),
         });
       } catch (error) {

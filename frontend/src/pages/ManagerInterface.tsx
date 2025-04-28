@@ -93,6 +93,9 @@ const ManagerInterface: React.FC = () => {
                 <Button as={RouterLink} to="/manager/employees" colorScheme="teal" size="lg">
                     Employee Management
                 </Button>
+                <Button as={RouterLink} to="/account" colorScheme="teal" size="lg">
+                    Account
+                </Button>
             </Stack>
 
             {/* Analytics */}

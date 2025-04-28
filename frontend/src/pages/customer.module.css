@@ -104,7 +104,6 @@
   height: 80%;
   display: flex;
   align-items: center;
-  margin-right: auto;
   box-sizing: border-box;
 }
 
@@ -473,6 +472,60 @@
 .chatbotSendButton:hover {
   background-color: #0056b3;
 }
+
+.chatControls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.voiceControlBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.voiceControlBtn:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.voiceControlBtn.active {
+  background-color: rgba(0, 123, 255, 0.2);
+}
+
+.micButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+}
+
+.micButton:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.micButton.listening {
+  background-color: rgba(255, 0, 0, 0.1);
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
 .ShareTeaCheckout:focus {
   outline: 3px solid #4CAF50; 
   outline-offset: -3px; 
@@ -491,3 +544,105 @@
   box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.3); 
   transform: translateY(-1px); 
 }
+
+.weatherAccountContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  margin: 0 10px;
+  margin-left: 50px;
+}
+
+.weatherMessage {
+  text-align: center;
+  padding: 8px 15px;
+  margin: 10px auto;
+  max-width: 80%;
+  background-color: rgba(255, 255, 255, 0.85);
+  border-radius: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  font-size: 16px;
+  font-weight: 500;
+  color: #4a4a4a;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.accountNav {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 100;
+}
+
+.accountButtons {
+  display: flex;
+  gap: 10px;
+  margin-top: 2px;
+}
+
+.accountButton {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.accountButton:hover {
+  background-color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.accountButtons {
+  display: flex;
+  gap: 20px;
+  margin-left: 5px;  /* Add spacing between logo and buttons */
+  height: fit-content; /* Adjust height to content */
+}
+
+/* Keep the existing button styles */
+.accountBtn, .logoutBtn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.accountBtn {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.accountBtn:hover {
+  background-color: #c0392b;
+}
+
+.logoutBtn {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.logoutBtn:hover {
+  background-color: #c0392b;
+}
+
+/* Add responsive styles if needed */
+@media (max-width: 768px) {
+  .weatherAccountContainer {
+    margin: 5px 0;
+    width: 100%;
+  }
+}
+

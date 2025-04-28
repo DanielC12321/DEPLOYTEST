@@ -97,6 +97,12 @@ function Cashier() {
   };
 
   const logout = () => {
+    // Clear authentication data
+    localStorage.removeItem('userId');
+    localStorage.removeItem('userRole');
+    sessionStorage.removeItem('userId');
+    sessionStorage.removeItem('userRole');
+    
     navigate("/login");
   };
 
@@ -111,9 +117,16 @@ function Cashier() {
   
   };
 
+  const goToAccount = () => {
+    navigate("/account");
+  };
+
   return (
         <div id="cashwrapper">
-        <div class="divs" id="cdiv1"><button onClick={logout} id="logout">Logout</button></div>
+        <div class="divs" id="cdiv1">
+          <button onClick={goToAccount} id="account">Account</button>
+          <button onClick={logout} id="logout">Logout</button>
+        </div>
         <div class="divs" id="div2"><h1 id="cheader">Create Order</h1>
         </div>
         <div class="divs" id="div3"><a></a></div>

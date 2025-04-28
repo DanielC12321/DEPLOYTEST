@@ -10,8 +10,18 @@ import specialtyBackground from './CustomerComponents/coffee-563800.jpg';
 
 function Customer() {
     const navigate = useNavigate();
-
+    localStorage.setItem('userId', '1'); 
+    localStorage.setItem('userRole', 'customer');
     return (
+      <>
+      <div className={styles.accountNav}>
+                <button 
+                    className={styles.accountButton}
+                    onClick={() => navigate('/account')}
+                >
+                    My Account
+                </button>
+            </div>
         <div className={styles.container}>
             <CategoryPanel 
         title="Milk Teas" 
@@ -34,6 +44,7 @@ function Customer() {
         onClick={() => navigate('/order/specialty')}
       />
       </div>
+      </>
     );
 };
 

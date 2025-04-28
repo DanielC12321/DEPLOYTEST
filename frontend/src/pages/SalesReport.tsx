@@ -164,6 +164,11 @@ const SalesReport: React.FC = () => {
                             Inventory
                         </Button>
                     </Link>
+                    <Link to="/account">
+                        <Button size="sm" colorScheme="teal" variant="outline">
+                            Account
+                        </Button>
+                    </Link>
                 </Flex>
 
                 {/* Date Pickers + Sort */}
