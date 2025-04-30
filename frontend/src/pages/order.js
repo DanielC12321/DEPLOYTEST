@@ -496,14 +496,13 @@ function Order() {
                     <img 
                         src="https://franchise.sharetea.com.au/wp-content/uploads/2021/08/cropped-Favicon.png" 
                         alt="Share Tea Logo" 
-                        onClick={() => navigate('/customer')}
                         style={{ cursor: 'pointer' }}
                     />
                 </div>
 
                 <div className={styles.weatherAccountContainer}>
                     {weatherBackground.message && (
-                        <div className={styles.weatherMessage}>
+                        <div className={styles.weatherMessage} role = "status">
                             {weatherBackground.message}
                         </div>
                     )}
@@ -602,12 +601,12 @@ function Order() {
 
             <div className={`${styles.orderSummaryPanel} ${isCheckoutOpen ? styles.open : ''}`}>
                 <div className={styles.orderSummaryHeader}>
-                    <h2>Order Summary</h2>
+                    <h2 role="banner">Order Summary</h2>
                     <button onClick={toggleCheckout} className={styles.closeButton}>×</button>
                 </div>
                 <div className={styles.orderItems}>
                 {cartItems.length === 0 ? (
-                        <div className={styles.emptyCart}>Your cart is empty</div>
+                        <div className={styles.emptyCart} role = "status" aria-live="polite">Your cart is empty</div>
                     ) : (
                         cartItems.map((item, index) => (
                             <div key={index} className={styles.orderItem}>
@@ -633,7 +632,7 @@ function Order() {
                         ))
                     )}
                 </div>
-                <div className={styles.orderTotal}>
+                <div className={styles.orderTotal} role="contentinfo">
                 <span>Total:</span>
                 <span>${calculateCartTotal()}</span>
                 </div>
@@ -654,7 +653,7 @@ function Order() {
             />
 
             {/* Chatbot UI */}
-            <div className={styles.chatbotToggle} onClick={toggleChat}>
+            <div className={styles.chatbotToggle} onClick={toggleChat} role="button">
                 <img 
                     src="https://img.icons8.com/color/48/000000/chat--v1.png" 
                     alt="Chat with us"

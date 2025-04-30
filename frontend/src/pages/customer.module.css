@@ -245,7 +245,7 @@
   align-items: center;
 }
 
-.checkoutTitle h2 {
+.checkoutTitle header{
   margin: 0;
   color: #333;
   text-transform: capitalize;
@@ -565,7 +565,7 @@
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   font-size: 16px;
   font-weight: 500;
-  color: #4a4a4a;
+  color: #000000;
   animation: fadeIn 0.5s ease-in-out;
 }
 
@@ -622,7 +622,7 @@
 
 .accountBtn {
   background-color: #e74c3c;
-  color: white;
+  color: rgb(0, 0, 0);
 }
 
 .accountBtn:hover {
@@ -631,7 +631,7 @@
 
 .logoutBtn {
   background-color: #e74c3c;
-  color: white;
+  color: rgb(0, 0, 0);
 }
 
 .logoutBtn:hover {
@@ -645,4 +645,3 @@
     width: 100%;
   }
 }
-
